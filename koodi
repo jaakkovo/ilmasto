@@ -1,4 +1,8 @@
 ﻿Tämä on koodii
 Vai niin;
 delete system32;
+<<<<<<< HEAD
 kakka
+=======
+hyvä
+>>>>>>> origin/master
