@@ -10,7 +10,6 @@
 
 #if defined (__USE_LPCOPEN)
 #if defined(NO_BOARD_LIB)
-#include "jotainshittii.h"
 #include "chip.h"
 #include "gpio.h"
 #else
