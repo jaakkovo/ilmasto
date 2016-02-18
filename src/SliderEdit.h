@@ -12,7 +12,6 @@
 #include "BarGraph.h"
 #include "LiquidCrystal.h"
 #include <string>
-#include "perkele.h"
 
 class SliderEdit: public PropertyEdit {
 public:
