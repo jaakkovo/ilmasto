@@ -53,20 +53,12 @@ void OnOffEdit::display() {
 	lcd.setCursor(0,1);
 	char s[16];
 	if(focus) {
-		//bar.draw(12);
-		//snprintf(s, 16, "     [%4d]     ", edit);
-		v1 = edit-lower;
-
-		v2 = upper-lower;
-
-		v3 = v1/v2;
-
-		bar.draw(v3*80);
+		snprintf(s, 16, "[%d]", edit);
 	}
 	else {
-		snprintf(s, 16, "      %4d      ", edit);
-		lcd.print(s);
+		snprintf(s, 16, "%d", edit);
 	}
+	lcd.print(s);
 }
 
 void OnOffEdit::save() {
@@ -75,7 +67,7 @@ void OnOffEdit::save() {
 	// todo: save current value for example to EEPROM for permanent storage
 }
 
-int OnOffEdit::getValue() {
+bool OnOffEdit::getValue() {
 	return value;
 }
 

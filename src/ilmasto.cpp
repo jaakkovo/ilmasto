@@ -84,31 +84,32 @@ int main(void) {
 	lcd.setCursor(0,0);
 
 	SimpleMenu menu;
-	DecimalEdit dectemperature(lcd, std::string("decTemperature"), 10.0, 50.0);
-	DecimalEdit dechumidity(lcd, std::string("decHumidity"), 10.0, 100.0);
+	//DecimalEdit dectemperature(lcd, std::string("decTemperature"), 10.0, 50.0);
+	//DecimalEdit dechumidity(lcd, std::string("decHumidity"), 10.0, 100.0);
 
-	SliderEdit intage(lcd, std::string("intAge"), 10, 20);
-	SliderEdit intyear(lcd, std::string("intYear"), 2010, 2150);
+	//SliderEdit intage(lcd, std::string("intAge"), 10, 20);
+	//SliderEdit intyear(lcd, std::string("intYear"), 2010, 2150);
 
 	OnOffEdit power(lcd, std::string("Power"));
-
-	//JokuEdit control(lcd, std::string("Control mode"));
-	//JokuEdit control(lcd, std::string("Status"));
-	//JokuEdit control(lcd, std::string("SETUP"));
-
+	ManuAutoEdit mode(lcd, std::string("Mode"));
+	StatusEdit status(lcd, std::string("Status"));
+	SetupEdit setup(lcd, std::string("Setup"));
 
 	menu.addItem(new MenuItem(power));
+	menu.addItem(new MenuItem(mode));
+	menu.addItem(new MenuItem(status));
+	menu.addItem(new MenuItem(setup));
 
-	menu.addItem(new MenuItem(dectemperature));
-	menu.addItem(new MenuItem(dechumidity));
-	menu.addItem(new MenuItem(intage));
-	menu.addItem(new MenuItem(intyear));
+	//menu.addItem(new MenuItem(dectemperature));
+	//menu.addItem(new MenuItem(dechumidity));
+	//menu.addItem(new MenuItem(intage));
+	//menu.addItem(new MenuItem(intyear));
 
 
-	dectemperature.setValue(10.5);
-	dechumidity.setValue(99.5);
-	intage.setValue(11);
-	intyear.setValue(2016);
+	//dectemperature.setValue(10.5);
+	//dechumidity.setValue(99.5);
+	//intage.setValue(11);
+	//intyear.setValue(2016);
 
 	menu.event(MenuItem::show); // display first menu item
 

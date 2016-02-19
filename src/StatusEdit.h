@@ -1,24 +1,21 @@
 /*
- * OnOffEdit.h
+ * StatusEdit.h
  *
  *  Created on: 18.2.2016
  *      Author: Jaakko
  */
 
-#ifndef ONOFFEDIT_H_
-#define ONOFFEDIT_H_
+#ifndef STATUSEDIT_H_
+#define STATUSEDIT_H_
 
 #include "PropertyEdit.h"
 #include "BarGraph.h"
 #include "LiquidCrystal.h"
-#include <string>
 
-class OnOffEdit : public PropertyEdit {
+class StatusEdit : public PropertyEdit {
 public:
-	OnOffEdit(LiquidCrystal& lcd_, std::string editTitle);
-	virtual ~OnOffEdit();
-	void increment();
-	void decrement();
+	StatusEdit(LiquidCrystal& lcd_, std::string editTitle);
+	virtual ~StatusEdit();
 	void accept();
 	void cancel();
 	void setFocus(bool focus);
@@ -31,9 +28,9 @@ private:
 	void displayEditValue();
 	LiquidCrystal& lcd;
 	std::string title;
-	bool value;
-	bool edit;
+	string value;
+	string edit;
 	bool focus;
 };
 
-#endif /* ONOFFEDIT_H_ */
+#endif /* STATUSEDIT_H_ */
