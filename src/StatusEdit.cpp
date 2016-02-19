@@ -5,12 +5,16 @@
  *      Author: Jaakko
  */
 
-#include "OnOffEdit.h"
+#include "StatusEdit.h"
 #include <cstdio>
+#include <string>
+#include <sstream>
+
+stringstream ss;
 
 StatusEdit::StatusEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
-	value = 0;
-	edit = 0;
+	value = "RUNNING";
+	edit = "RUNNING";
 	focus = false;
 }
 
@@ -37,11 +41,19 @@ void StatusEdit::display() {
 	lcd.print(title);
 	lcd.setCursor(0,1);
 	char s[16];
+	char editti[16];
+
 	if(focus) {
-		snprintf(s, 16, "[%s]", edit);
+		ss << edit;
+		ss >> editti;
+
+		snprintf(s, 16, "[%s]", editti);
 	}
 	else {
-		snprintf(s, 16, "%s", edit);
+		ss << edit;
+		ss >> editti;
+
+		snprintf(s, 16, "[%s]", editti);
 	}
 	lcd.print(s);
 }
@@ -50,11 +62,11 @@ void StatusEdit::save() {
 	value = edit;
 }
 
-bool StatusEdit::getValue() {
+string StatusEdit::getValue() {
 	return value;
 }
 
-void StatusEdit::setValue(bool value) {
+void StatusEdit::setValue(string value) {
 	edit = value;
 	save();
 }

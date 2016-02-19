@@ -25,6 +25,11 @@
 #include "MenuItem.h"
 #include "IntegerEdit.h"
 #include "SliderEdit.h"
+#include "StatusEdit.h"
+#include "SetupEdit.h"
+#include "ManuAutoEdit.h"
+#include "OnOffEdit.h"
+
 
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
@@ -92,12 +97,10 @@ int main(void) {
 
 	OnOffEdit power(lcd, std::string("Power"));
 	ManuAutoEdit mode(lcd, std::string("Mode"));
-	StatusEdit status(lcd, std::string("Status"));
 	SetupEdit setup(lcd, std::string("Setup"));
 
 	menu.addItem(new MenuItem(power));
 	menu.addItem(new MenuItem(mode));
-	menu.addItem(new MenuItem(status));
 	menu.addItem(new MenuItem(setup));
 
 	//menu.addItem(new MenuItem(dectemperature));

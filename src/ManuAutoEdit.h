@@ -22,8 +22,8 @@ public:
 	void cancel();
 	void setFocus(bool focus);
 	void display();
-	bool getValue();
-	void setValue(bool value);
+	string getValue();
+	void setValue(string value);
 
 private:
 	void save();

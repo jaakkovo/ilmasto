@@ -5,12 +5,16 @@
  *      Author: Jaakko
  */
 
-#include "OnOffEdit.h"
+#include "SetupEdit.h"
 #include <cstdio>
+#include <string>
+#include <sstream>
+
+stringstream ss;
 
 SetupEdit::SetupEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
-	value = 0;
-	edit = 0;
+	value = "Time Set";
+	edit = "Time Set";
 	focus = false;
 }
 
@@ -53,11 +57,18 @@ void SetupEdit::display() {
 	lcd.print(title);
 	lcd.setCursor(0,1);
 	char s[16];
+	char editti[16];
 	if(focus) {
-		snprintf(s, 16, "[%s]", edit);
+		ss << edit;
+		ss >> editti;
+
+		snprintf(s, 16, "[%s]", editti);
 	}
 	else {
-		snprintf(s, 16, "%s", edit);
+		ss << edit;
+		ss >> editti;
+
+		snprintf(s, 16, "[%s]", editti);
 	}
 	lcd.print(s);
 }
@@ -66,12 +77,13 @@ void SetupEdit::save() {
 	value = edit;
 }
 
-bool SetupEdit::getValue() {
+string SetupEdit::getValue() {
 	return value;
 }
 
-void SetupEdit::setValue(bool value) {
+void SetupEdit::setValue(string value) {
 	edit = value;
 	save();
 }
+
 
