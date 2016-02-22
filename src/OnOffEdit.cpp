@@ -62,9 +62,15 @@ void OnOffEdit::display() {
 }
 
 void OnOffEdit::save() {
-	// set current value to be same as edit value
+
+	if (edit == true) {
+		// PIDEÄÄN POWERI PÄÄLLÄ
+	}
+	if (edit == false) {
+		// SAMMUTETAAN LAITE
+	}
 	value = edit;
-	// todo: save current value for example to EEPROM for permanent storage
+
 }
 
 bool OnOffEdit::getValue() {

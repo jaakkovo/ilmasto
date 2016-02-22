@@ -29,6 +29,7 @@
 #include "SetupEdit.h"
 #include "ManuAutoEdit.h"
 #include "OnOffEdit.h"
+#include "TimeEdit.h"
 
 
 #include "DecimalEdit.h"
@@ -89,19 +90,39 @@ int main(void) {
 	lcd.setCursor(0,0);
 
 	SimpleMenu menu;
+	SimpleMenu setup_menu;
+
 	//DecimalEdit dectemperature(lcd, std::string("decTemperature"), 10.0, 50.0);
 	//DecimalEdit dechumidity(lcd, std::string("decHumidity"), 10.0, 100.0);
 
 	//SliderEdit intage(lcd, std::string("intAge"), 10, 20);
 	//SliderEdit intyear(lcd, std::string("intYear"), 2010, 2150);
 
+	int hertzit = 0; // Hertsimäärä
+	int lower = 1; // Alaraja
+	int upper = 10; // Yläraja
+
+	//Setup-valikko
+	TimeEdit time(lcd, std::string("Time Set"));
+	IntegerEdit hertz(lcd, std::string("Hertz"), 0, 0);
+	IntegerEdit min(lcd, std::string("Min"), 0, 0);
+	IntegerEdit max(lcd, std::string("Min"), 0, 0);
+
+	setup_menu.addItem(new MenuItem(time));
+	setup_menu.addItem(new MenuItem(hertz));
+	setup_menu.addItem(new MenuItem(min));
+	setup_menu.addItem(new MenuItem(max));
+
+	//Päävalikko
 	OnOffEdit power(lcd, std::string("Power"));
 	ManuAutoEdit mode(lcd, std::string("Mode"));
 	SetupEdit setup(lcd, std::string("Setup"));
+	StatusEdit status(lcd, std::string("Status"));
 
 	menu.addItem(new MenuItem(power));
 	menu.addItem(new MenuItem(mode));
 	menu.addItem(new MenuItem(setup));
+	menu.addItem(new MenuItem(status));
 
 	//menu.addItem(new MenuItem(dectemperature));
 	//menu.addItem(new MenuItem(dechumidity));
@@ -118,25 +139,70 @@ int main(void) {
 
 	while(1){
 
-		if (Chip_GPIO_GetPinState(LPC_GPIO, 0,10)) {
-			while(Chip_GPIO_GetPinState(LPC_GPIO, 0,10)) {
+		if (setup.getValue == "menu") {
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+				}
+				menu.event(MenuItem::up);
 			}
-			menu.event(MenuItem::up);
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+				}
+				menu.event(MenuItem::down);
+			}
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				}
+				menu.event(MenuItem::ok);
+			}
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+				}
+				menu.event(MenuItem::back);
+			}
 		}
-		if (Chip_GPIO_GetPinState(LPC_GPIO, 0,16)) {
-			while(Chip_GPIO_GetPinState(LPC_GPIO, 0,16)) {
+
+		if (setup.getValue == "setup_menu") {
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+				}
+				setup_menu.event(MenuItem::up);
 			}
-			menu.event(MenuItem::down);
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+				}
+				setup_menu.event(MenuItem::down);
+			}
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				}
+				setup_menu.event(MenuItem::ok);
+			}
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+				}
+				setup_menu.event(MenuItem::back);
+			}
 		}
-		if (Chip_GPIO_GetPinState(LPC_GPIO, 1,3)) {
-			while(Chip_GPIO_GetPinState(LPC_GPIO, 1,3)) {
-			}
-			menu.event(MenuItem::ok);
+
+
+		if (mode.getValue() == "Automatic" ) {
+			// TÄHÄN AUTOMAATTIOHJAUS
 		}
-		if (Chip_GPIO_GetPinState(LPC_GPIO, 0,0)) {
-			while(Chip_GPIO_GetPinState(LPC_GPIO, 0,0)) {
-			}
-			menu.event(MenuItem::back);
+
+		// JOS PÄÄLLÄ
+		if ("jotain") {
+			status.setValue("RUNNING");
+		}
+
+		// JOS POIS PÄÄLTÄ
+		if ("jotain") {
+			status.setValue("STOPPED");
+		}
+
+		// JOS VIRHE
+		if ("jotain") {
+			status.setValue("ERROR");
 		}
 	}
 

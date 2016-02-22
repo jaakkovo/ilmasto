@@ -22,6 +22,12 @@ StatusEdit::~StatusEdit() {
 	// TODO Auto-generated destructor stub
 }
 
+void StatusEdit::increment() {
+
+}
+void StatusEdit::decrement() {
+
+}
 
 void StatusEdit::accept() {
 	save();
@@ -32,7 +38,7 @@ void StatusEdit::cancel() {
 }
 
 void StatusEdit::setFocus(bool focus) {
-	this->focus = focus;
+	//Statusta ei voida Focusaa.
 }
 
 void StatusEdit::display() {
@@ -47,13 +53,13 @@ void StatusEdit::display() {
 		ss << edit;
 		ss >> editti;
 
-		snprintf(s, 16, "[%s]", editti);
+		snprintf(s, 16, "%s", editti);
 	}
 	else {
 		ss << edit;
 		ss >> editti;
 
-		snprintf(s, 16, "[%s]", editti);
+		snprintf(s, 16, "%s", editti);
 	}
 	lcd.print(s);
 }

@@ -10,6 +10,8 @@
 
 #include "PropertyEdit.h"
 #include "BarGraph.h"
+#include "SimpleMenu.h"
+#include "MenuItem.h"
 #include "LiquidCrystal.h"
 
 class SetupEdit : public PropertyEdit {
@@ -29,10 +31,13 @@ private:
 	void save();
 	void displayEditValue();
 	LiquidCrystal& lcd;
+	SimpleMenu setup_menu;
 	std::string title;
 	string value;
 	string edit;
+	string currentmenu;
 	bool focus;
+	bool focus_alempi;
 };
 
 #endif /* SETUPEDIT_H_ */

@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3F3B0AF1-94ED-4FCB-8FD1-7EC1D0305D62}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\src\board.c" />
+    <ClCompile Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\src\board_sysinit.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\acmp_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\adc_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\chip_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\clock_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\crc_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\dac_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\dma_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\eeprom.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\gpio_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\i2cm_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\i2cs_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\i2c_common_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\iap.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\iocon_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\pinint_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\pmu_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\ring_buffer.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\ritimer_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\rtc_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sctipu_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sct_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sct_pwm_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\spi_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\stopwatch_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\swm_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sysctl_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sysinit_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\uart_15xx.c" />
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\wwdt_15xx.c" />
+    <ClCompile Include="original\modbus_master\uart_test\src\crp.c" />
+    <ClCompile Include="original\modbus_master\uart_test\src\cr_cpp_config.cpp" />
+    <ClCompile Include="original\modbus_master\uart_test\src\cr_startup_lpc15xx.cpp" />
+    <ClCompile Include="original\modbus_master\uart_test\src\ModbusMaster.cpp" />
+    <ClCompile Include="original\modbus_master\uart_test\src\retarget_itm.c" />
+    <ClCompile Include="original\modbus_master\uart_test\src\SerialPort.cpp" />
+    <ClCompile Include="original\modbus_master\uart_test\src\sysinit.c" />
+    <ClCompile Include="original\modbus_master\uart_test\src\uart_test.cpp" />
+    <ClCompile Include="src\BarGraph.cpp" />
+    <ClCompile Include="src\crp.c" />
+    <ClCompile Include="src\cr_cpp_config.cpp" />
+    <ClCompile Include="src\cr_startup_lpc15xx.cpp" />
+    <ClCompile Include="src\DecimalEdit.cpp" />
+    <ClCompile Include="src\ilmasto.cpp" />
+    <ClCompile Include="src\IntegerEdit.cpp" />
+    <ClCompile Include="src\lcd_port.cpp" />
+    <ClCompile Include="src\LiquidCrystal.cpp" />
+    <ClCompile Include="src\ManuAutoEdit.cpp" />
+    <ClCompile Include="src\MenuItem.cpp" />
+    <ClCompile Include="src\OnOffEdit.cpp" />
+    <ClCompile Include="src\SetupEdit.cpp" />
+    <ClCompile Include="src\SimpleMenu.cpp" />
+    <ClCompile Include="src\SliderEdit.cpp" />
+    <ClCompile Include="src\StatusEdit.cpp" />
+    <ClCompile Include="src\sysinit.c" />
+    <ClCompile Include="src\TimeEdit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\inc\board.h" />
+    <ClInclude Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\inc\board_api.h" />
+    <ClInclude Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\src\retarget.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\acmp_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\adc_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\chip.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\clock_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\cmsis.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\core_cm3.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\core_cmFunc.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\core_cmInstr.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\crc_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\dac_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\dma_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\eeprom.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\error.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\fmc_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\gpiogroup_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\gpio_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\i2cm_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\i2cs_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\i2c_common_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\iap.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\inmux_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\iocon_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\lpc_types.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\mrt_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\pinint_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\pmu_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\ring_buffer.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\ritimer_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\romapi_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_adc_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_can_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_dma_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_i2c_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_pwr_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_spi_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_uart_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rtc_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sctipu_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sct_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sct_pwm_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\spi_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\stopwatch.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\swm_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sysctl_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sys_config.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\uart_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_adc.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_cdc.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_cdcuser.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_core.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_desc.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_dfu.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_dfuuser.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_hid.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_hiduser.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_hw.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_msc.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_mscuser.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_rom_api.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd_15xx.h" />
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\wwdt_15xx.h" />
+    <ClInclude Include="original\modbus_master\uart_test\src\crc16.h" />
+    <ClInclude Include="original\modbus_master\uart_test\src\ModbusMaster.h" />
+    <ClInclude Include="original\modbus_master\uart_test\src\SerialPort.h" />
+    <ClInclude Include="original\modbus_master\uart_test\src\word.h" />
+    <ClInclude Include="src\BarGraph.h" />
+    <ClInclude Include="src\DecimalEdit.h" />
+    <ClInclude Include="src\IntegerEdit.h" />
+    <ClInclude Include="src\lcd_port.h" />
+    <ClInclude Include="src\LiquidCrystal.h" />
+    <ClInclude Include="src\ManuAutoEdit.h" />
+    <ClInclude Include="src\MenuItem.h" />
+    <ClInclude Include="src\OnOffEdit.h" />
+    <ClInclude Include="src\PropertyEdit.h" />
+    <ClInclude Include="src\SetupEdit.h" />
+    <ClInclude Include="src\SimpleMenu.h" />
+    <ClInclude Include="src\SliderEdit.h" />
+    <ClInclude Include="src\StatusEdit.h" />
+    <ClInclude Include="src\TimeEdit.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

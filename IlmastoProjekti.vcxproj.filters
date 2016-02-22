@@ -1,0 +1,441 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\src\board.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\src\board_sysinit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\acmp_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\adc_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\chip_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\clock_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\crc_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\dac_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\dma_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\eeprom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\gpio_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\i2cm_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\i2cs_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\i2c_common_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\iap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\iocon_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\pinint_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\pmu_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\ring_buffer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\ritimer_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\rtc_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sctipu_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sct_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sct_pwm_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\spi_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\stopwatch_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\swm_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sysctl_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\sysinit_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\uart_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\lpc_chip_15xx\src\wwdt_15xx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\cr_cpp_config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\cr_startup_lpc15xx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\ModbusMaster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\SerialPort.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\uart_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\crp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\retarget_itm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original\modbus_master\uart_test\src\sysinit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BarGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cr_cpp_config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cr_startup_lpc15xx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DecimalEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ilmasto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IntegerEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lcd_port.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LiquidCrystal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ManuAutoEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MenuItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OnOffEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SetupEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SimpleMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SliderEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StatusEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\crp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sysinit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TimeEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\inc\board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\inc\board_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_board_nxp_lpcxpresso_1549\src\retarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\acmp_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\adc_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\chip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\clock_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\cmsis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\core_cm3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\core_cmFunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\core_cmInstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\crc_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\dac_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\dma_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\eeprom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\fmc_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\gpiogroup_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\gpio_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\i2cm_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\i2cs_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\i2c_common_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\iap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\inmux_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\iocon_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\lpc_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\mrt_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\pinint_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\pmu_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\ring_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\ritimer_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\romapi_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_adc_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_can_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_dma_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_i2c_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_pwr_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_spi_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rom_uart_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\rtc_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sctipu_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sct_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sct_pwm_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\spi_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\stopwatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\swm_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sysctl_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\sys_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\uart_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\wwdt_15xx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_adc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_cdc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_cdcuser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_desc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_dfu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_dfuuser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_hid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_hiduser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_hw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_msc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_mscuser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\lpc_chip_15xx\inc\usbd\usbd_rom_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\uart_test\src\crc16.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\uart_test\src\ModbusMaster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\uart_test\src\SerialPort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="original\modbus_master\uart_test\src\word.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BarGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DecimalEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IntegerEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lcd_port.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LiquidCrystal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ManuAutoEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MenuItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OnOffEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PropertyEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SetupEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SimpleMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SliderEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StatusEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TimeEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

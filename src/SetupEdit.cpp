@@ -16,6 +16,7 @@ SetupEdit::SetupEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), tit
 	value = "Time Set";
 	edit = "Time Set";
 	focus = false;
+	currentmenu = "menu";
 }
 
 SetupEdit::~SetupEdit() {
@@ -32,19 +33,11 @@ void SetupEdit::cancel() {
 }
 
 void SetupEdit::increment() {
-	if (value == "Boundaries"){
-		edit = "Hz";
-	} else{
-		edit = "Time Set";
-	}
+
 }
 
 void SetupEdit::decrement() {
-	if (value == "Time Set"){
-		edit = "Hz";
-	} else{
-		edit = "Boundaries";
-	}
+
 }
 
 void SetupEdit::setFocus(bool focus) {
@@ -58,19 +51,17 @@ void SetupEdit::display() {
 	lcd.setCursor(0,1);
 	char s[16];
 	char editti[16];
-	if(focus) {
-		ss << edit;
-		ss >> editti;
 
-		snprintf(s, 16, "[%s]", editti);
+	if (focus) {
+		currentmenu = "setup_menu";
 	}
 	else {
 		ss << edit;
 		ss >> editti;
 
-		snprintf(s, 16, "[%s]", editti);
+		snprintf(s, 16, "%s", editti);
+		lcd.print(s);
 	}
-	lcd.print(s);
 }
 
 void SetupEdit::save() {
@@ -78,7 +69,7 @@ void SetupEdit::save() {
 }
 
 string SetupEdit::getValue() {
-	return value;
+	return currentmenu;
 }
 
 void SetupEdit::setValue(string value) {

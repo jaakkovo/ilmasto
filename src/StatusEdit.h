@@ -18,6 +18,8 @@ public:
 	virtual ~StatusEdit();
 	void accept();
 	void cancel();
+	void increment();
+	void decrement();
 	void setFocus(bool focus);
 	void display();
 	string getValue();
