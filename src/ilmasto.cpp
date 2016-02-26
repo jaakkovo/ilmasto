@@ -98,15 +98,11 @@ int main(void) {
 	//SliderEdit intage(lcd, std::string("intAge"), 10, 20);
 	//SliderEdit intyear(lcd, std::string("intYear"), 2010, 2150);
 
-	int hertzit = 0; // Hertsim‰‰r‰
-	int lower = 1; // Alaraja
-	int upper = 10; // Yl‰raja
-
 	//Setup-valikko
 	TimeEdit time(lcd, std::string("Time Set"));
-	IntegerEdit hertz(lcd, std::string("Hertz"), 0, 0);
-	IntegerEdit min(lcd, std::string("Min"), 0, 0);
-	IntegerEdit max(lcd, std::string("Min"), 0, 0);
+	IntegerEdit hertz(lcd, std::string("Hertz"), 0, 10);
+	IntegerEdit min(lcd, std::string("Min"), 0, 10);
+	IntegerEdit max(lcd, std::string("Max"), 0, 10);
 
 	setup_menu.addItem(new MenuItem(time));
 	setup_menu.addItem(new MenuItem(hertz));
@@ -135,11 +131,20 @@ int main(void) {
 	//intage.setValue(11);
 	//intyear.setValue(2016);
 
-	menu.event(MenuItem::show); // display first menu item
+	 // display first menu item
+	menu.event(MenuItem::show);
+
+	int valikko = 1;
 
 	while(1){
 
 		if (setup.getValue == "menu") {
+
+			if (valikko != 1) {
+				valikko = 1;
+				menu.event(MenuItem::show);
+			}
+
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				}
@@ -163,6 +168,12 @@ int main(void) {
 		}
 
 		if (setup.getValue == "setup_menu") {
+
+			if (valikko != 2) {
+				valikko = 2;
+				setup_menu.event(MenuItem::show);
+			}
+
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				}

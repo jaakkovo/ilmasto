@@ -56,6 +56,7 @@ void SetupEdit::display() {
 		currentmenu = "setup_menu";
 	}
 	else {
+		currentmenu = "menu";
 		ss << edit;
 		ss >> editti;
 
