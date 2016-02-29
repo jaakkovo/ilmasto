@@ -109,7 +109,7 @@ int main(void) {
 	setup_menu.addItem(new MenuItem(min));
 	setup_menu.addItem(new MenuItem(max));
 
-	//Päävalikko
+	//Pï¿½ï¿½valikko
 	OnOffEdit power(lcd, std::string("Power"));
 	ManuAutoEdit mode(lcd, std::string("Mode"));
 	SetupEdit setup(lcd, std::string("Setup"));
@@ -198,15 +198,15 @@ int main(void) {
 
 
 		if (mode.getValue() == "Automatic" ) {
-			// TÄHÄN AUTOMAATTIOHJAUS
+			// Tï¿½Hï¿½N AUTOMAATTIOHJAUS
 		}
 
-		// JOS PÄÄLLÄ
+		// JOS Pï¿½ï¿½LLï¿½
 		if ("jotain") {
 			status.setValue("RUNNING");
 		}
 
-		// JOS POIS PÄÄLTÄ
+		// JOS POIS Pï¿½ï¿½LTï¿½
 		if ("jotain") {
 			status.setValue("STOPPED");
 		}
