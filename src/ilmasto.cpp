@@ -13,11 +13,12 @@
 #include "chip.h"
 #else
 #include "board.h"
-#include <cstdio>
-#include <iostream>
+#endif
+#endif
 
-#endif
-#endif
+#include <cstdio>
+#include <cstring>
+#include <iostream>
 #include "lcd_port.h"
 #include "BarGraph.h"
 #include "LiquidCrystal.h"
@@ -30,18 +31,84 @@
 #include "ManuAutoEdit.h"
 #include "OnOffEdit.h"
 #include "TimeEdit.h"
-
-
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
 #include <cr_section_macros.h>
 
-extern "C"
-{
+#include "ModbusMaster.h"
+
+static volatile int counter;
+static volatile uint32_t systicks;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void SysTick_Handler(void)
 {
-
+	systicks++;
+	if(counter > 0) counter--;
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+void Sleep(int ms)
+{
+	counter = ms;
+	while(counter > 0) {
+		__WFI();
+	}
+}
+
+/* this function is required by the modbus library */
+uint32_t millis() {
+	return systicks;
+}
+
+void printRegister(ModbusMaster& node, uint16_t reg) {
+	uint8_t result;
+	// slave: read 16-bit registers starting at reg to RX buffer
+	result = node.readHoldingRegisters(reg, 1);
+
+	// do something with data if read is successful
+	if (result == node.ku8MBSuccess)
+	{
+		printf("R%d=%04X\n", reg, node.getResponseBuffer(0));
+	}
+	else {
+		printf("R%d=???\n", reg);
+	}
+}
+
+bool setFrequency(ModbusMaster& node, uint16_t freq) {
+	uint8_t result;
+	int ctr;
+	bool atSetpoint;
+	const int delay = 500;
+
+	node.writeSingleRegister(1, freq); // set motor frequency
+
+	printf("Set freq = %d\n", freq/40); // for debugging
+
+	// wait until we reach set point or timeout occurs
+	ctr = 0;
+	atSetpoint = false;
+	do {
+		Sleep(delay);
+		// read status word
+		result = node.readHoldingRegisters(3, 1);
+		// check if we are at setpoint
+		if (result == node.ku8MBSuccess) {
+			if(node.getResponseBuffer(0) & 0x0100) atSetpoint = true;
+		}
+		ctr++;
+	} while(ctr < 20 && !atSetpoint);
+
+	printf("Elapsed: %d\n", ctr * delay); // for debugging
+
+	return atSetpoint;
 }
 
 int main(void) {
@@ -70,19 +137,40 @@ int main(void) {
 	// functions related to the board hardware
 	Board_Init();
 	// Set the LED to the state of "On"
-	Board_LED_Set(2, true);
+	Board_LED_Set(1, true);
 #endif
 #endif
-
-
 
 	/* Enable and setup SysTick Timer at a periodic rate */
-	SysTick_Config(SystemCoreClock / 1000);
+	// SysTick_Config(SystemCoreClock / 1000);
 
-	// TODO: insert code here
-	NVIC_EnableIRQ(RITIMER_IRQn);
-	Chip_RIT_Init(LPC_RITIMER);
+	//NVIC_EnableIRQ(RITIMER_IRQn);
+	//Chip_RIT_Init(LPC_RITIMER);
 
+	ModbusMaster node(2); // Create modbus object that connects to slave id 2
+
+	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
+	printRegister(node, 3); // for debugging
+	node.writeSingleRegister(0, 0x0406); // prepare for starting
+	printRegister(node, 3); // for debugging
+
+	Sleep(1000); // give converter some time to set up
+	// note: we should have a startup state machine that check converter status and acts per current status
+	//       but we take the easy way out and just wait a while and hope that everything goes well
+
+	printRegister(node, 3); // for debugging
+	node.writeSingleRegister(0, 0x047F); // set drive to start mode
+	printRegister(node, 3); // for debugging
+
+	Sleep(1000); // give converter some time to set up
+	// note: we should have a startup state machine that check converter status and acts per current status
+	//       but we take the easy way out and just wait a while and hope that everything goes well
+
+	printRegister(node, 3); // for debugging
+
+	int i = 0;
+	int j = 0;
+	const uint16_t fa[20] = { 1000, 2000, 3000, 3500, 4000, 5000, 7000, 8000, 8300, 10000, 10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000 };
 
 	LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
 
@@ -91,12 +179,6 @@ int main(void) {
 
 	SimpleMenu menu;
 	SimpleMenu setup_menu;
-
-	//DecimalEdit dectemperature(lcd, std::string("decTemperature"), 10.0, 50.0);
-	//DecimalEdit dechumidity(lcd, std::string("decHumidity"), 10.0, 100.0);
-
-	//SliderEdit intage(lcd, std::string("intAge"), 10, 20);
-	//SliderEdit intyear(lcd, std::string("intYear"), 2010, 2150);
 
 	//Setup-valikko
 	TimeEdit time(lcd, std::string("Time Set"));
@@ -109,7 +191,7 @@ int main(void) {
 	setup_menu.addItem(new MenuItem(min));
 	setup_menu.addItem(new MenuItem(max));
 
-	//P��valikko
+	//Paavalikko
 	OnOffEdit power(lcd, std::string("Power"));
 	ManuAutoEdit mode(lcd, std::string("Mode"));
 	SetupEdit setup(lcd, std::string("Setup"));
@@ -120,23 +202,37 @@ int main(void) {
 	menu.addItem(new MenuItem(setup));
 	menu.addItem(new MenuItem(status));
 
-	//menu.addItem(new MenuItem(dectemperature));
-	//menu.addItem(new MenuItem(dechumidity));
-	//menu.addItem(new MenuItem(intage));
-	//menu.addItem(new MenuItem(intyear));
-
-
-	//dectemperature.setValue(10.5);
-	//dechumidity.setValue(99.5);
-	//intage.setValue(11);
-	//intyear.setValue(2016);
-
-	 // display first menu item
+	// Display first menu item
 	menu.event(MenuItem::show);
 
 	int valikko = 1;
 
 	while(1){
+		uint8_t result;
+
+		// slave: read (2) 16-bit registers starting at register 102 to RX buffer
+		j = 0;
+		do {
+			result = node.readHoldingRegisters(102, 2);
+			j++;
+		} while(j < 3 && result != node.ku8MBSuccess);
+
+		if (result == node.ku8MBSuccess) {
+			printf("F=%4d, I=%4d  (ctr=%d)\n", node.getResponseBuffer(0), node.getResponseBuffer(1),j);
+		}
+		else {
+			printf("ctr=%d\n",j);
+		}
+
+		Sleep(3000);
+		i++;
+		if(i >= 20) {
+			i=0;
+		}
+		// frequency is scaled:
+		// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
+		setFrequency(node, fa[i]);
+
 
 		if (setup.getValue == "menu") {
 
@@ -198,15 +294,15 @@ int main(void) {
 
 
 		if (mode.getValue() == "Automatic" ) {
-			// T�H�N AUTOMAATTIOHJAUS
+			// TAHAN AUTOMAATTIOHJAUS
 		}
 
-		// JOS P��LL�
+		// JOS PAALLA
 		if ("jotain") {
 			status.setValue("RUNNING");
 		}
 
-		// JOS POIS P��LT�
+		// JOS POIS PAALTA
 		if ("jotain") {
 			status.setValue("STOPPED");
 		}
