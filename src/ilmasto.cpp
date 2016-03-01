@@ -229,10 +229,13 @@ int main(void) {
 		if(i >= 20) {
 			i=0;
 		}
+
 		// frequency is scaled:
 		// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
 		setFrequency(node, fa[i]);
 
+
+		// VALIKKO
 
 		if (setup.getValue == "menu") {
 
