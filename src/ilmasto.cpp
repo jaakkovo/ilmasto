@@ -300,6 +300,7 @@ int main(void) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				}
 				setup_menu.event(MenuItem::back);
+				setup.setValue("menu");
 			}
 		}
 

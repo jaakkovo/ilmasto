@@ -74,8 +74,7 @@ string SetupEdit::getValue() {
 }
 
 void SetupEdit::setValue(string value) {
-	edit = value;
-	save();
+	currentmenu = value;
 }
 
 
