@@ -24,6 +24,8 @@ public:
 	void display();
 	int getValue();
 	void setValue(int value);
+	string returnmenu();
+	void setmenu(string menu);
 private:
 	void save();
 	void displayEditValue();
@@ -34,6 +36,7 @@ private:
 	bool focus;
 	int lower;
 	int upper;
+	string currentmenu;
 
 };
 

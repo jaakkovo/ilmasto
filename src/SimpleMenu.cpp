@@ -20,21 +20,12 @@ void SimpleMenu::addItem(MenuItem *item) {
 	items.push_back(item);
 }
 
-int SimpleMenu::palautaValikko(){
-	return valikko;
-}
-
-void SimpleMenu::asetaValikko(int valinta){
-	valikko = valinta;
-}
-
 void SimpleMenu::event(MenuItem::menuEvent e) {
 	if(items.size() <= 0) return;
 
 	if(!items[position]->event(e)) {
 		if(e == MenuItem::up) position++;
 		else if(e == MenuItem::down) position--;
-		else if(e == MenuItem::back) valikko=0;
 
 		if(position < 0) position = items.size() - 1;
 		if(position >= (int) items.size()) position = 0;

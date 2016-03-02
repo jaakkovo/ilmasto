@@ -34,6 +34,7 @@ bool MenuItem::event(menuEvent e) {
 			focus = false;
 		}
 		else {
+			pe.cancel();
 			handled = false;
 		}
 		pe.setFocus(focus);

@@ -17,8 +17,6 @@ public:
 	virtual ~SimpleMenu();
 	void addItem(MenuItem *item);
 	void event(MenuItem::menuEvent e);
-	int palautaValikko();
-	void asetaValikko(int valinta);
 private:
 	std::vector<MenuItem *> items;
 	int position;
