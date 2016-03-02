@@ -184,7 +184,6 @@ int main(void) {
 	lcd.begin(16,2);
 	lcd.setCursor(0,0);
 
-	/*                ALAVALIKKO KOMMENTOITU
 	SimpleMenu setup_menu;
 	//Setup-valikko
 	TimeEdit time(lcd, std::string("Time Set"));
@@ -196,7 +195,6 @@ int main(void) {
 	setup_menu.addItem(new MenuItem(hertz));
 	setup_menu.addItem(new MenuItem(min));
 	setup_menu.addItem(new MenuItem(max));
-*/
 
 	SimpleMenu menu;
 
@@ -217,6 +215,7 @@ int main(void) {
 	int valikko = 1;
 
 	while(1){
+		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
 		uint8_t result;
 
 		// slave: read (2) 16-bit registers starting at register 102 to RX buffer
@@ -233,6 +232,7 @@ int main(void) {
 			printf("ctr=%d\n",j);
 		}
 
+
 		Sleep(3000);
 		i++;
 		if(i >= 20) {
@@ -242,8 +242,15 @@ int main(void) {
 		// frequency is scaled:
 		// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
 		setFrequency(node, fa[i]);
+*/
 
 		// VALIKKO
+		if (setup.getValue() == "menu") {
+
+			if (valikko != 1) {
+				valikko = 1;
+				menu.event(MenuItem::show);
+			}
 
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
@@ -265,7 +272,7 @@ int main(void) {
 				}
 				menu.event(MenuItem::back);
 			}
-
+		}
 
 		if (setup.getValue() == "setup_menu") {
 
