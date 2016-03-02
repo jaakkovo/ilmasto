@@ -33,11 +33,8 @@ private:
 	LiquidCrystal& lcd;
 	SimpleMenu setup_menu;
 	std::string title;
-	string value;
-	string edit;
 	string currentmenu;
 	bool focus;
-	bool focus_alempi;
 };
 
 #endif /* SETUPEDIT_H_ */
