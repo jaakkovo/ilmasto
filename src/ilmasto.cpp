@@ -15,8 +15,6 @@
 #endif
 #endif
 
-#include <cr_section_macros.h>
-
 #include "ModbusMaster.h"
 
 #include <cstdio>
@@ -36,7 +34,7 @@
 #include "TimeEdit.h"
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
-
+#include <cr_section_macros.h>
 
 static volatile int counter;
 static volatile uint32_t systicks;
@@ -117,6 +115,22 @@ void Sleep(int ms)
 
 int main(void) {
 
+	// Alustetaan nappi up
+	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 10, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 10);
+
+	// Alustetaan nappi down
+	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 16, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16);
+
+	// Alustetaan nappi ok
+	Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 3, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 1, 3);
+
+	// Alustetaan nappi back
+	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 0, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 0);
+
 
 #if defined (__USE_LPCOPEN)
 	// Read clock settings and update SystemCoreClock variable
@@ -129,31 +143,16 @@ int main(void) {
 	Board_LED_Set(2, true);
 #endif
 #endif
+
+
+    Chip_RIT_Init(LPC_RITIMER);
+    NVIC_EnableIRQ(RITIMER_IRQn);
+
 	SysTick_Config(Chip_Clock_GetSysTickClockRate() / 1000);
 
-		    Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
-
-			// Alustetaan nappi up
-			Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 10, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 10);
-
-			// Alustetaan nappi down
-			Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 16, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16);
-
-			// Alustetaan nappi ok
-			Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 3, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 1, 3);
-
-			// Alustetaan nappi back
-			Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 0, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 0);
+	Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
 
 
-	NVIC_EnableIRQ(RITIMER_IRQn);
-	Chip_RIT_Init(LPC_RITIMER);
-
-	printf("03");
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
 	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
@@ -175,51 +174,47 @@ int main(void) {
 
 	printRegister(node, 3); // for debugging
 
-	printf("04");
+
 	int i = 0;
 	int j = 0;
 	const uint16_t fa[20] = { 1000, 2000, 3000, 3500, 4000, 5000, 7000, 8000, 8300, 10000, 10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000 };
 
-	printf("05");
-
 	LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
-	printf("1");
 
 	lcd.begin(16,2);
 	lcd.setCursor(0,0);
-	printf("2");
-	SimpleMenu menu;
+
+	/*                ALAVALIKKO KOMMENTOITU
 	SimpleMenu setup_menu;
-	printf("3");
 	//Setup-valikko
 	TimeEdit time(lcd, std::string("Time Set"));
 	IntegerEdit hertz(lcd, std::string("Hertz"), 0, 10);
 	IntegerEdit min(lcd, std::string("Min"), 0, 10);
 	IntegerEdit max(lcd, std::string("Max"), 0, 10);
-	printf("4");
+
 	setup_menu.addItem(new MenuItem(time));
 	setup_menu.addItem(new MenuItem(hertz));
 	setup_menu.addItem(new MenuItem(min));
 	setup_menu.addItem(new MenuItem(max));
-	printf("5");
+*/
+
+	SimpleMenu menu;
+
 	//Paavalikko
 	OnOffEdit power(lcd, std::string("Power"));
 	ManuAutoEdit mode(lcd, std::string("Mode"));
 	SetupEdit setup(lcd, std::string("Setup"));
 	StatusEdit status(lcd, std::string("Status"));
-	printf("6");
+
 	menu.addItem(new MenuItem(power));
 	menu.addItem(new MenuItem(mode));
 	menu.addItem(new MenuItem(setup));
 	menu.addItem(new MenuItem(status));
 
-	printf("asd");
-
 	// Display first menu item
 	menu.event(MenuItem::show);
 
 	int valikko = 1;
-
 
 	while(1){
 		uint8_t result;
@@ -249,10 +244,6 @@ int main(void) {
 		setFrequency(node, fa[i]);
 
 		// VALIKKO
-
-printf("pitaisi nayttaa");
-				menu.event(MenuItem::show);
-
 
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
