@@ -30,8 +30,8 @@ bool MenuItem::event(menuEvent e) {
 		break;
 	case back:
 		if(focus) {
-			focus = false;
 			pe.cancel();
+			focus = false;
 		}
 		else {
 			handled = false;

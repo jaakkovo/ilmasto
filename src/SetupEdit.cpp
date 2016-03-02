@@ -27,7 +27,7 @@ void SetupEdit::accept() {
 }
 
 void SetupEdit::cancel() {
-
+	currentmenu = "menu";
 }
 
 void SetupEdit::increment() {

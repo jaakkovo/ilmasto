@@ -211,6 +211,7 @@ int main(void) {
 
 	// Display first menu item
 	menu.event(MenuItem::show);
+	menu.asetaValikko(1);
 
 	int valikko = 1;
 
@@ -245,7 +246,19 @@ int main(void) {
 */
 
 		// VALIKKO
-		if (setup.getValue() == "menu") {
+
+		if (setup_menu.palautaValikko() == 0 ) {
+			setup.setValue("menu");
+			menu.asetaValikko(1);
+			menu.event(MenuItem::show);
+		}
+
+		if (menu.palautaValikko() == 1 ) {
+
+			if(setup.getValue() == "setup_menu"){
+				menu.asetaValikko(0);
+				setup_menu.asetaValikko(1);
+			}
 
 			if (valikko != 1) {
 				valikko = 1;
@@ -274,7 +287,7 @@ int main(void) {
 			}
 		}
 
-		if (setup.getValue() == "setup_menu") {
+		if (setup_menu.palautaValikko() == 1 ) {
 
 			if (valikko != 2) {
 				valikko = 2;
@@ -300,7 +313,6 @@ int main(void) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				}
 				setup_menu.event(MenuItem::back);
-				setup.setFocus(false);
 			}
 		}
 
