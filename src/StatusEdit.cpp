@@ -10,7 +10,6 @@
 #include <string>
 #include <sstream>
 
-stringstream ss;
 
 StatusEdit::StatusEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
 	value = "RUNNING";
@@ -42,6 +41,7 @@ void StatusEdit::setFocus(bool focus) {
 }
 
 void StatusEdit::display() {
+	stringstream ss;
 	lcd.clear();
 	lcd.setCursor(0,0);
 	lcd.print(title);

@@ -7,7 +7,6 @@
  Description : main definition
 ===============================================================================
  */
-
 #if defined (__USE_LPCOPEN)
 #if defined(NO_BOARD_LIB)
 #include "chip.h"
@@ -15,6 +14,10 @@
 #include "board.h"
 #endif
 #endif
+
+#include <cr_section_macros.h>
+
+#include "ModbusMaster.h"
 
 #include <cstdio>
 #include <cstring>
@@ -33,9 +36,7 @@
 #include "TimeEdit.h"
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
-#include <cr_section_macros.h>
 
-#include "ModbusMaster.h"
 
 static volatile int counter;
 static volatile uint32_t systicks;
@@ -43,6 +44,7 @@ static volatile uint32_t systicks;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 void SysTick_Handler(void)
 {
@@ -54,13 +56,7 @@ void SysTick_Handler(void)
 }
 #endif
 
-void Sleep(int ms)
-{
-	counter = ms;
-	while(counter > 0) {
-		__WFI();
-	}
-}
+
 
 /* this function is required by the modbus library */
 uint32_t millis() {
@@ -111,23 +107,16 @@ bool setFrequency(ModbusMaster& node, uint16_t freq) {
 	return atSetpoint;
 }
 
+void Sleep(int ms)
+{
+	counter = ms;
+	while(counter > 0) {
+		__WFI();
+	}
+}
+
 int main(void) {
 
-	// Alustetaan nappi up
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 10, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 10);
-
-	// Alustetaan nappi down
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 16, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16);
-
-	// Alustetaan nappi ok
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 3, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 1, 3);
-
-	// Alustetaan nappi back
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 0, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 0);
 
 #if defined (__USE_LPCOPEN)
 	// Read clock settings and update SystemCoreClock variable
@@ -137,16 +126,34 @@ int main(void) {
 	// functions related to the board hardware
 	Board_Init();
 	// Set the LED to the state of "On"
-	Board_LED_Set(1, true);
+	Board_LED_Set(2, true);
 #endif
 #endif
+	SysTick_Config(Chip_Clock_GetSysTickClockRate() / 1000);
 
-	/* Enable and setup SysTick Timer at a periodic rate */
-	// SysTick_Config(SystemCoreClock / 1000);
+		    Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
 
-	//NVIC_EnableIRQ(RITIMER_IRQn);
-	//Chip_RIT_Init(LPC_RITIMER);
+			// Alustetaan nappi up
+			Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 10, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 10);
 
+			// Alustetaan nappi down
+			Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 16, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16);
+
+			// Alustetaan nappi ok
+			Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 3, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 1, 3);
+
+			// Alustetaan nappi back
+			Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 0, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
+			Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 0);
+
+
+	NVIC_EnableIRQ(RITIMER_IRQn);
+	Chip_RIT_Init(LPC_RITIMER);
+
+	printf("03");
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
 	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
@@ -168,44 +175,51 @@ int main(void) {
 
 	printRegister(node, 3); // for debugging
 
+	printf("04");
 	int i = 0;
 	int j = 0;
 	const uint16_t fa[20] = { 1000, 2000, 3000, 3500, 4000, 5000, 7000, 8000, 8300, 10000, 10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000 };
 
+	printf("05");
+
 	LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
+	printf("1");
 
 	lcd.begin(16,2);
 	lcd.setCursor(0,0);
-
+	printf("2");
 	SimpleMenu menu;
 	SimpleMenu setup_menu;
-
+	printf("3");
 	//Setup-valikko
 	TimeEdit time(lcd, std::string("Time Set"));
 	IntegerEdit hertz(lcd, std::string("Hertz"), 0, 10);
 	IntegerEdit min(lcd, std::string("Min"), 0, 10);
 	IntegerEdit max(lcd, std::string("Max"), 0, 10);
-
+	printf("4");
 	setup_menu.addItem(new MenuItem(time));
 	setup_menu.addItem(new MenuItem(hertz));
 	setup_menu.addItem(new MenuItem(min));
 	setup_menu.addItem(new MenuItem(max));
-
+	printf("5");
 	//Paavalikko
 	OnOffEdit power(lcd, std::string("Power"));
 	ManuAutoEdit mode(lcd, std::string("Mode"));
 	SetupEdit setup(lcd, std::string("Setup"));
 	StatusEdit status(lcd, std::string("Status"));
-
+	printf("6");
 	menu.addItem(new MenuItem(power));
 	menu.addItem(new MenuItem(mode));
 	menu.addItem(new MenuItem(setup));
 	menu.addItem(new MenuItem(status));
 
+	printf("asd");
+
 	// Display first menu item
 	menu.event(MenuItem::show);
 
 	int valikko = 1;
+
 
 	while(1){
 		uint8_t result;
@@ -234,15 +248,11 @@ int main(void) {
 		// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
 		setFrequency(node, fa[i]);
 
-
 		// VALIKKO
 
-		if (setup.getValue == "menu") {
-
-			if (valikko != 1) {
-				valikko = 1;
+printf("pitaisi nayttaa");
 				menu.event(MenuItem::show);
-			}
+
 
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
@@ -264,9 +274,9 @@ int main(void) {
 				}
 				menu.event(MenuItem::back);
 			}
-		}
 
-		if (setup.getValue == "setup_menu") {
+
+		if (setup.getValue() == "setup_menu") {
 
 			if (valikko != 2) {
 				valikko = 2;
@@ -295,25 +305,6 @@ int main(void) {
 			}
 		}
 
-
-		if (mode.getValue() == "Automatic" ) {
-			// TAHAN AUTOMAATTIOHJAUS
-		}
-
-		// JOS PAALLA
-		if ("jotain") {
-			status.setValue("RUNNING");
-		}
-
-		// JOS POIS PAALTA
-		if ("jotain") {
-			status.setValue("STOPPED");
-		}
-
-		// JOS VIRHE
-		if ("jotain") {
-			status.setValue("ERROR");
-		}
 	}
 
 	return 0;

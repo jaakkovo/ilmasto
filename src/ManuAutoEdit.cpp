@@ -11,7 +11,6 @@
 #include <string>
 #include <sstream>
 
-stringstream ss;
 
 using namespace std;
 
@@ -54,6 +53,7 @@ void ManuAutoEdit::setFocus(bool focus) {
 }
 
 void ManuAutoEdit::display() {
+	stringstream ss;
 	lcd.clear();
 	lcd.setCursor(0,0);
 	lcd.print(title);
