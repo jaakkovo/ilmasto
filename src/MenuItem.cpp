@@ -35,7 +35,6 @@ bool MenuItem::event(menuEvent e) {
 		}
 		else {
 			pe.cancel();
-			handled = false;
 		}
 		pe.setFocus(focus);
 		break;
