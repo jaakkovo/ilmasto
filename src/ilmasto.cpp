@@ -301,8 +301,6 @@ int main(void) {
 				}
 				setup_menu.event(MenuItem::back);
 				setup.setFocus(false);
-				setup.setValue("menu");
-				menu.event(MenuItem::show);
 			}
 		}
 

@@ -48,8 +48,10 @@ void SetupEdit::display() {
 	lcd.print(title);
 	lcd.setCursor(0,1);
 
-	if (focus) {
+	if (focus == true) {
 		currentmenu = "setup_menu";
+	}else{
+		currentmenu = "menu";
 	}
 }
 
