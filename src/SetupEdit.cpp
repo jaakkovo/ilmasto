@@ -49,9 +49,8 @@ void SetupEdit::display() {
 	lcd.setCursor(0,1);
 
 	if (focus == true) {
+		focus = false;
 		currentmenu = "setup_menu";
-	}else{
-		currentmenu = "menu";
 	}
 }
 
