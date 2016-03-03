@@ -9,7 +9,6 @@
 
 SimpleMenu::SimpleMenu() {
 	position = 0;
-	valikko = 0;
 }
 
 SimpleMenu::~SimpleMenu() {

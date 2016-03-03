@@ -35,6 +35,7 @@
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
 #include <cr_section_macros.h>
+#include "I2C.h"
 
 static volatile int counter;
 static volatile uint32_t systicks;
@@ -212,7 +213,11 @@ int main(void) {
 	// Display first menu item
 	menu.event(MenuItem::show);
 
-	int valikko = 1;
+	I2C i2c = I2C(0, );
+
+
+
+	int valikko = 0;
 
 	while(1){
 		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
@@ -270,6 +275,7 @@ int main(void) {
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				}
+				setup.setFocus(false);
 				menu.event(MenuItem::back);
 			}
 		}
@@ -299,15 +305,19 @@ int main(void) {
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				}
+				//setup.setFocus(false);
 				setup_menu.event(MenuItem::back);
+
+
+				if (hertz.returnmenu()=="menu" || max.returnmenu()=="menu" || min.returnmenu()=="menu"){
+					hertz.setmenu("setup_menu");
+					min.setmenu("setup_menu");
+					max.setmenu("setup_menu");
+					setup.setValue("menu");
+				}
+
 			}
 
-			if (hertz.returnmenu()=="menu" || min.returnmenu() == "menu" || max.returnmenu()=="menu"){
-				hertz.setmenu("setup_menu");
-				min.setmenu("setup_menu");
-				max.setmenu("setup_menu");
-				setup.setValue("menu");
-			}
 		}
 
 	}

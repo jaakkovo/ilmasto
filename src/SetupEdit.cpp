@@ -10,7 +10,6 @@
 #include <string>
 #include <sstream>
 
-stringstream ss;
 
 SetupEdit::SetupEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
 	focus = false;
@@ -23,10 +22,12 @@ SetupEdit::~SetupEdit() {
 
 
 void SetupEdit::accept() {
-	save();
+	focus = true;
+	currentmenu = "setup_menu";
 }
 
 void SetupEdit::cancel() {
+	focus = false;
 	currentmenu = "menu";
 }
 
@@ -40,6 +41,11 @@ void SetupEdit::decrement() {
 
 void SetupEdit::setFocus(bool focus) {
 	this->focus = focus;
+	if (focus == true){
+		currentmenu = "setup_menu";
+	}else if (focus == false){
+		currentmenu = "menu";
+	}
 }
 
 void SetupEdit::display() {
@@ -47,11 +53,6 @@ void SetupEdit::display() {
 	lcd.setCursor(0,0);
 	lcd.print(title);
 	lcd.setCursor(0,1);
-
-	if (focus == true) {
-		focus = false;
-		currentmenu = "setup_menu";
-	}
 }
 
 void SetupEdit::save() {
