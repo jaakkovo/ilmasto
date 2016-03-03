@@ -212,17 +212,27 @@ int main(void) {
 
 	// Display first menu item
 	menu.event(MenuItem::show);
-	const uint8_t addr= 0x40;
-	const uint16_t buff = 0x8;
-	const uint8_t write = 0x81;
-	const uint8_t read = 0xF1;
-	I2C i2c = I2C(0,10000);
 
-	i2c.transaction(addr, write,buff, read,buff);
+		I2C i2c(0, 100000);
 
-	uint32_t press = Chip_I2CM_XferBlocking(0, &i2c);
+		while(1) {
+			uint8_t pressureData[3];
+			uint8_t readPressureCmd = 0xF1;
+			int16_t pressure = 0;
 
-	printf(press);
+
+			if (i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3)) {
+				/* Output temperature. */
+				pressure = (pressureData[0] << 8) | pressureData[1];
+				printf("Pressure read over I2C is %.1f Pa\r\n",	pressure/240.0);
+			}
+			else {
+				printf("Error reading pressure.\r\n");
+			}
+			Sleep(1000);
+		}
+
+
 	int valikko = 0;
 
 	while(1){
