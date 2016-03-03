@@ -212,11 +212,17 @@ int main(void) {
 
 	// Display first menu item
 	menu.event(MenuItem::show);
+	const uint8_t addr= 0x40;
+	const uint16_t buff = 0x8;
+	const uint8_t write = 0x81;
+	const uint8_t read = 0xF1;
+	I2C i2c = I2C(0,10000);
 
-	I2C i2c = I2C(0, );
+	i2c.transaction(addr, write,buff, read,buff);
 
+	uint32_t press = Chip_I2CM_XferBlocking(0, &i2c);
 
-
+	printf(press);
 	int valikko = 0;
 
 	while(1){
