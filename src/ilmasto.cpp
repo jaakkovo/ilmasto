@@ -1,3 +1,4 @@
+
 /*
 ===============================================================================
  Name        : main.c
@@ -24,7 +25,7 @@
 #include "BarGraph.h"
 #include "LiquidCrystal.h"
 #include "SimpleMenu.h"
-#include "MenuItem.h"
+#include "SubMenuItem.h"
 #include "IntegerEdit.h"
 #include "SliderEdit.h"
 #include "StatusEdit.h"
@@ -36,6 +37,7 @@
 #include "PropertyEdit.h"
 #include <cr_section_macros.h>
 #include "I2C.h"
+#include "SetupEdit.h"
 
 static volatile int counter;
 static volatile uint32_t systicks;
@@ -59,7 +61,7 @@ void SysTick_Handler(void)
 
 /* this function is required by the modbus library */
 uint32_t millis() {
-	return systicks;
+	return (systicks);
 }
 
 void printRegister(ModbusMaster& node, uint16_t reg) {
@@ -103,7 +105,7 @@ bool setFrequency(ModbusMaster& node, uint16_t freq) {
 
 	printf("Elapsed: %d\n", ctr * delay); // for debugging
 
-	return atSetpoint;
+	return (atSetpoint);
 }
 
 void Sleep(int ms)
@@ -146,8 +148,8 @@ int main(void) {
 #endif
 
 
-    Chip_RIT_Init(LPC_RITIMER);
-    NVIC_EnableIRQ(RITIMER_IRQn);
+	Chip_RIT_Init(LPC_RITIMER);
+	NVIC_EnableIRQ(RITIMER_IRQn);
 
 	SysTick_Config(Chip_Clock_GetSysTickClockRate() / 1000);
 
@@ -185,142 +187,140 @@ int main(void) {
 	lcd.begin(16,2);
 	lcd.setCursor(0,0);
 
-	SimpleMenu setup_menu;
-	//Setup-valikko
-	TimeEdit time(lcd, std::string("Time Set"));
-	IntegerEdit hertz(lcd, std::string("Hertz"), 0, 10);
-	IntegerEdit min(lcd, std::string("Min"), 0, 10);
-	IntegerEdit max(lcd, std::string("Max"), 0, 10);
-
-	setup_menu.addItem(new MenuItem(time));
-	setup_menu.addItem(new MenuItem(hertz));
-	setup_menu.addItem(new MenuItem(min));
-	setup_menu.addItem(new MenuItem(max));
-
 	SimpleMenu menu;
 
-	//Paavalikko
-	OnOffEdit power(lcd, std::string("Power"));
-	ManuAutoEdit mode(lcd, std::string("Mode"));
-	SetupEdit setup(lcd, std::string("Setup"));
-	StatusEdit status(lcd, std::string("Status"));
+	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
+	vector <string> setupvalikot = { "Min", "Max", "Hertz", "Time set" };
+	vector <string> statusvalikot = { "info_System", "info_ModBus", "info_Pressure_sensor"};
 
-	menu.addItem(new MenuItem(power));
-	menu.addItem(new MenuItem(mode));
-	menu.addItem(new MenuItem(setup));
-	menu.addItem(new MenuItem(status));
+	// Alamenun kohtien ylarajat, muista sama järjestys!
+	vector <int> ylarajat = { 10, 5, 2, 50 };
+
+	// Alamenun kohtien alarajat, muista sama järjestys!
+	vector <int> alarajat = { 0, 0, 0, 0 };
+
+	// Luodaan menun kohdat. Menuille annetaan otsikko, alamenujen otsikot, alarajat ja ylarajat.
+	OnOffEdit power = OnOffEdit(lcd, "Power");
+	ManuAutoEdit mode = ManuAutoEdit(lcd, "Mode");
+	SetupEdit setup = SetupEdit(lcd, "Setup", setupvalikot, alarajat, ylarajat);
+	StatusEdit status = StatusEdit(lcd, "Status", statusvalikot, alarajat, ylarajat);
+
+	// Päävalikkoon lisätään kohtia. True / False viimeisenä parametrina kertoo, onko valikolla alavalikko.
+	menu.addItem(new SubMenuItem(power, false));
+	menu.addItem(new SubMenuItem(mode, false));
+	menu.addItem(new SubMenuItem(setup, true));
+	menu.addItem(new SubMenuItem(status, true));
 
 	// Display first menu item
 	menu.event(MenuItem::show);
 
-	I2C i2c = I2C(0, );
+	//I2C i2c = I2C(0, );
 
-
-
-	int valikko = 0;
+	int lukema = 0;
 
 	while(1){
-		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
-		uint8_t result;
-
-		// slave: read (2) 16-bit registers starting at register 102 to RX buffer
-		j = 0;
-		do {
-			result = node.readHoldingRegisters(102, 2);
-			j++;
-		} while(j < 3 && result != node.ku8MBSuccess);
-
-		if (result == node.ku8MBSuccess) {
-			printf("F=%4d, I=%4d  (ctr=%d)\n", node.getResponseBuffer(0), node.getResponseBuffer(1),j);
-		}
-		else {
-			printf("ctr=%d\n",j);
-		}
-
-
-		Sleep(3000);
-		i++;
-		if(i >= 20) {
-			i=0;
-		}
-
-		// frequency is scaled:
-		// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
-		setFrequency(node, fa[i]);
-*/
-
-		// VALIKKO
-		if (setup.getValue() == "menu") {
-
-			if (valikko != 1) {
-				valikko = 1;
-				menu.event(MenuItem::show);
+		if (lukema <= 0){
+			// Tässä näytä IDLE -tila
+			if (lukema <= 0) {
+				lukema=1;
+				lcd.clear();
+				lcd.setCursor(0,0);
+				char c[16];
+				snprintf(c, 16, "%s", "Idle nakyma tahan");
+				lcd.print(c);
 			}
 
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 16) || Chip_GPIO_GetPinState(LPC_GPIO, 1, 3) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 16) || Chip_GPIO_GetPinState(LPC_GPIO, 1, 3) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)){
+				}
+				// Jos jotain nappia painetaan, ajastus käynnistyy uudelleen.
+				lukema = 5000;
+			}
+		}else{
+
+			/*  TAAJUUDEN VAIHTELU KOMMENTOITU
+			uint8_t result;
+
+			// slave: read (2) 16-bit registers starting at register 102 to RX buffer
+			j = 0;
+			do {
+				result = node.readHoldingRegisters(102, 2);
+				j++;
+			} while(j < 3 && result != node.ku8MBSuccess);
+
+			if (result == node.ku8MBSuccess) {
+				printf("F=%4d, I=%4d  (ctr=%d)\n", node.getResponseBuffer(0), node.getResponseBuffer(1),j);
+			}
+			else {
+				printf("ctr=%d\n",j);
+			}
+
+
+			Sleep(3000);
+			i++;
+			if(i >= 20) {
+				i=0;
+			}
+
+			// frequency is scaled:
+			// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
+			setFrequency(node, fa[i]);
+			 */
+
+			// VALIKKO
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				}
-				menu.event(MenuItem::up);
+				lukema = 5000; // Jokaisesta napinpainalluksesta ajastus käyntiin.
+				menu.event(SubMenuItem::up);
 			}
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 				}
-				menu.event(MenuItem::down);
+				lukema = 5000;
+				menu.event(SubMenuItem::down);
 			}
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 				}
-				menu.event(MenuItem::ok);
+				lukema = 5000;
+				menu.event(SubMenuItem::ok);
 			}
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				}
-				setup.setFocus(false);
-				menu.event(MenuItem::back);
+				lukema = 5000;
+				menu.event(SubMenuItem::back);
 			}
+
+			if (mode.getValue() == "Automatic"){
+				// Automaattiohjaus
+			}
+
+			if (mode.getValue() == "Manual"){
+				// Manuaaliohjaus
+			}
+
+
+			// Näin muutetaan statuksen arvoja:
+			// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
+			// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
+			//	if (jotain){
+			//		status.setValue[0, "Running OK"]
+			//	}
+
+			//	if (jotain){
+			//	status.setValue[1, "Connected"]
+			//	}
+
+			// Näin tarkastetaan asetettuja arvoja:
+			// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
+			//	if(setup.getValue(0) != asetettu_ala_arvo){
+			// Mitä tapahtuu jos arvo on muuttunut
+			//	}
+
+			lukema--;
 		}
-
-		if (setup.getValue() == "setup_menu") {
-
-			if (valikko != 2) {
-				valikko = 2;
-				setup_menu.event(MenuItem::show);
-			}
-
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
-				}
-				setup_menu.event(MenuItem::up);
-			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
-				}
-				setup_menu.event(MenuItem::down);
-			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
-				}
-				setup_menu.event(MenuItem::ok);
-			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				}
-				//setup.setFocus(false);
-				setup_menu.event(MenuItem::back);
-
-
-				if (hertz.returnmenu()=="menu" || max.returnmenu()=="menu" || min.returnmenu()=="menu"){
-					hertz.setmenu("setup_menu");
-					min.setmenu("setup_menu");
-					max.setmenu("setup_menu");
-					setup.setValue("menu");
-				}
-
-			}
-
-		}
-
 	}
-
-	return 0;
+	return (0);
 }

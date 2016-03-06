@@ -62,7 +62,7 @@ void TimeEdit::save() {
 
 
 int TimeEdit::getValue() {
-	return value;
+	return (value);
 }
 void TimeEdit::setValue(int value) {
 	edit = value;

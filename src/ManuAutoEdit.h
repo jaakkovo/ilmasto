@@ -1,5 +1,5 @@
 /*
- * ManuAutoEdit.h
+ * OnOffEdit.h
  *
  *  Created on: 18.2.2016
  *      Author: Jaakko
@@ -9,12 +9,14 @@
 #define MANUAUTOEDIT_H_
 
 #include "PropertyEdit.h"
-#include "BarGraph.h"
 #include "LiquidCrystal.h"
+#include <string>
+
+using namespace std;
 
 class ManuAutoEdit : public PropertyEdit {
 public:
-	ManuAutoEdit(LiquidCrystal& lcd_, std::string editTitle);
+	ManuAutoEdit(LiquidCrystal& lcd_, string editTitle);
 	virtual ~ManuAutoEdit();
 	void increment();
 	void decrement();
@@ -29,7 +31,7 @@ private:
 	void save();
 	void displayEditValue();
 	LiquidCrystal& lcd;
-	std::string title;
+	string title;
 	string value;
 	string edit;
 	bool focus;

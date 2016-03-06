@@ -54,6 +54,6 @@ bool MenuItem::event(menuEvent e) {
 	}
 	if(handled) pe.display();
 
-	return handled;
+	return (handled);
 }
 

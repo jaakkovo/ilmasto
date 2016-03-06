@@ -77,14 +77,14 @@ void IntegerEdit::save() {
 
 
 int IntegerEdit::getValue() {
-	return value;
+	return (value);
 }
 void IntegerEdit::setValue(int value) {
 	edit = value;
 	save();
 }
 string IntegerEdit::returnmenu(){
-	return currentmenu;
+	return (currentmenu);
 }
 
 void IntegerEdit::setmenu(string menu){

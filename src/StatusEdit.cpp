@@ -1,79 +1,78 @@
 /*
- * StatusEdit.cpp
+ * SubEdit.cpp
  *
- *  Created on: 18.2.2016
- *      Author: Jaakko
+ *  Created on: 2.2.2016
+ *      Author: krl
  */
 
 #include "StatusEdit.h"
+
 #include <cstdio>
-#include <string>
-#include <sstream>
+#include <iostream>
 
-
-StatusEdit::StatusEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
-	value = "RUNNING";
-	edit = "RUNNING";
-	focus = false;
-}
+using namespace std;
 
 StatusEdit::~StatusEdit() {
-	// TODO Auto-generated destructor stub
 }
 
 void StatusEdit::increment() {
-
+	// Status asetetaan itsestään, sitä ei voi muuttaa.
 }
-void StatusEdit::decrement() {
 
+void StatusEdit::decrement() {
+	// Status asetetaan itsestään, sitä ei voi muuttaa.
 }
 
 void StatusEdit::accept() {
-	save();
 }
 
 void StatusEdit::cancel() {
-	edit = value;
 }
 
+
 void StatusEdit::setFocus(bool focus) {
-	//Statusta ei voida Focusaa.
+	// Statusta ei voida myöskään focusata.
+}
+
+void StatusEdit::setKohdalla(bool kohdalla) {
+	this->kohdalla = kohdalla;
 }
 
 void StatusEdit::display() {
-	stringstream ss;
-	lcd.clear();
-	lcd.setCursor(0,0);
-	lcd.print(title);
-	lcd.setCursor(0,1);
-	char s[16];
-	char editti[16];
 
-	if(focus) {
-		ss << edit;
-		ss >> editti;
+	if (!kohdalla) {
+		lcd.clear();
+		lcd.setCursor(0,0);
+		lcd.print(title);
+	}else if (kohdalla) {
+		lcd.clear();
+		lcd.setCursor(0,0);
 
-		snprintf(s, 16, "%s", editti);
+		// TESTAA TÄMÄ LÄPI
+		std::string s;
+		for (const auto &piece : alamenut[nro]) s += piece;
+		lcd.print(s);
+
+		lcd.setCursor(0,1);
+		char c[16];
+		snprintf(c, 16, "      %4d      ", edit);
+		lcd.print(c);
 	}
-	else {
-		ss << edit;
-		ss >> editti;
 
-		snprintf(s, 16, "%s", editti);
-	}
-	lcd.print(s);
 }
+
+
+
 
 void StatusEdit::save() {
 	value = edit;
 }
 
-string StatusEdit::getValue() {
-	return value;
-}
 
-void StatusEdit::setValue(string value) {
-	edit = value;
+int StatusEdit::getValue(int nro) {
+	return (value[nro]);
+}
+void StatusEdit::setValue(int nro, string value) {
+	edit[nro] = value;
 	save();
 }
-

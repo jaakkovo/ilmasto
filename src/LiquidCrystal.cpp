@@ -263,7 +263,7 @@ inline void LiquidCrystal::command(uint8_t value) {
 
 inline size_t LiquidCrystal::write(uint8_t value) {
   send(value, HIGH);
-  return 1; // assume success
+  return (1); // assume success
 }
 
 void LiquidCrystal::print(string& s) {
