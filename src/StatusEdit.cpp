@@ -9,6 +9,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -16,11 +17,19 @@ StatusEdit::~StatusEdit() {
 }
 
 void StatusEdit::increment() {
-	// Status asetetaan itsestään, sitä ei voi muuttaa.
+	if (kohdalla && !focus) {
+		if (nro < alamenut.size()-1) {
+			nro++;
+		}
+	}
 }
 
 void StatusEdit::decrement() {
-	// Status asetetaan itsestään, sitä ei voi muuttaa.
+	if (kohdalla && !focus) {
+		if (nro > 0) {
+			nro--;
+		}
+	}
 }
 
 void StatusEdit::accept() {
@@ -31,7 +40,7 @@ void StatusEdit::cancel() {
 
 
 void StatusEdit::setFocus(bool focus) {
-	// Statusta ei voida myöskään focusata.
+	this->focus = focus;
 }
 
 void StatusEdit::setKohdalla(bool kohdalla) {
@@ -40,6 +49,9 @@ void StatusEdit::setKohdalla(bool kohdalla) {
 
 void StatusEdit::display() {
 
+	stringstream convert;
+	stringstream ss;
+
 	if (!kohdalla) {
 		lcd.clear();
 		lcd.setCursor(0,0);
@@ -47,16 +59,23 @@ void StatusEdit::display() {
 	}else if (kohdalla) {
 		lcd.clear();
 		lcd.setCursor(0,0);
-
-		// TESTAA TÄMÄ LÄPI
 		std::string s;
-		for (const auto &piece : alamenut[nro]) s += piece;
-		lcd.print(s);
 
+		ss << alamenut[nro];
+		s = ss.str();
+		lcd.print(s);
 		lcd.setCursor(0,1);
-		char c[16];
-		snprintf(c, 16, "      %4d      ", edit);
-		lcd.print(c);
+		if (focus){
+			convert << tietoja[nro];
+			s = convert.str();
+			lcd.print(s);
+		}else{
+			convert << edit[nro];
+			s = convert.str();
+			lcd.print(s);
+		}
+
+
 	}
 
 }
@@ -69,8 +88,11 @@ void StatusEdit::save() {
 }
 
 
-int StatusEdit::getValue(int nro) {
-	return (value[nro]);
+string StatusEdit::getValue(int nro) {
+	std::string s;
+	s = value[nro];
+
+	return (s);
 }
 void StatusEdit::setValue(int nro, string value) {
 	edit[nro] = value;

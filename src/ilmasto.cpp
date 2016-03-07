@@ -36,7 +36,7 @@
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
 #include <cr_section_macros.h>
-#include "I2C.h"
+//#include "I2C.h"
 #include "SetupEdit.h"
 
 static volatile int counter;
@@ -190,14 +190,30 @@ int main(void) {
 	SimpleMenu menu;
 
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
-	vector <string> setupvalikot = { "Min", "Max", "Hertz", "Time set" };
-	vector <string> statusvalikot = { "info_System", "info_ModBus", "info_Pressure_sensor"};
+	//vector <string> setupvalikot = { "Min", "Max", "Hertz", "Time set" };
+	//vector <string> statusvalikot = { "info_System", "info_ModBus", "info_Pressure_sensor"};
+
+	static const string arr[] = { "Min", "Max", "Hertz", "Time set" };
+	vector<string> setupvalikot (arr, arr + sizeof(arr) / sizeof(arr[0]) );
+
+	static const string arr2[] ={ "info_System", "info_ModBus", "info_Pressure_sensor"};
+	vector<string> statusvalikot (arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]) );
+
 
 	// Alamenun kohtien ylarajat, muista sama järjestys!
-	vector <int> ylarajat = { 10, 5, 2, 50 };
+	//vector <int> ylarajat = { 10, 5, 2, 50 };
 
 	// Alamenun kohtien alarajat, muista sama järjestys!
-	vector <int> alarajat = { 0, 0, 0, 0 };
+	//vector <int> alarajat = { 0, 0, 0, 0 };
+
+
+	static const int arr3[] = { 10, 5, 2, 50 };
+	vector<int> ylarajat (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
+
+	static const int arr4[] = { 0, 0, 0, 0 };
+	vector<int> alarajat (arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]) );
+
+
 
 	// Luodaan menun kohdat. Menuille annetaan otsikko, alamenujen otsikot, alarajat ja ylarajat.
 	OnOffEdit power = OnOffEdit(lcd, "Power");
@@ -212,31 +228,13 @@ int main(void) {
 	menu.addItem(new SubMenuItem(status, true));
 
 	// Display first menu item
-	menu.event(MenuItem::show);
+	menu.event(SubMenuItem::show);
 
 	//I2C i2c = I2C(0, );
 
 	int lukema = 0;
 
 	while(1){
-		if (lukema <= 0){
-			// Tässä näytä IDLE -tila
-			if (lukema <= 0) {
-				lukema=1;
-				lcd.clear();
-				lcd.setCursor(0,0);
-				char c[16];
-				snprintf(c, 16, "%s", "Idle nakyma tahan");
-				lcd.print(c);
-			}
-
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 16) || Chip_GPIO_GetPinState(LPC_GPIO, 1, 3) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 16) || Chip_GPIO_GetPinState(LPC_GPIO, 1, 3) || Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)){
-				}
-				// Jos jotain nappia painetaan, ajastus käynnistyy uudelleen.
-				lukema = 5000;
-			}
-		}else{
 
 			/*  TAAJUUDEN VAIHTELU KOMMENTOITU
 			uint8_t result;
@@ -271,25 +269,21 @@ int main(void) {
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 				}
-				lukema = 5000; // Jokaisesta napinpainalluksesta ajastus käyntiin.
 				menu.event(SubMenuItem::up);
 			}
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 				}
-				lukema = 5000;
 				menu.event(SubMenuItem::down);
 			}
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 				}
-				lukema = 5000;
 				menu.event(SubMenuItem::ok);
 			}
 			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 				}
-				lukema = 5000;
 				menu.event(SubMenuItem::back);
 			}
 
@@ -318,9 +312,6 @@ int main(void) {
 			//	if(setup.getValue(0) != asetettu_ala_arvo){
 			// Mitä tapahtuu jos arvo on muuttunut
 			//	}
-
-			lukema--;
-		}
 	}
 	return (0);
 }

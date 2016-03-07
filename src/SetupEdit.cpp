@@ -6,9 +6,10 @@
  */
 
 #include "SetupEdit.h"
-
 #include <cstdio>
 #include <iostream>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -76,18 +77,22 @@ void SetupEdit::display() {
 
 		// TESTAA TÄMÄ LÄPI
 		std::string s;
-		for (const auto &piece : alamenut[nro]) s += piece;
+		s = alamenut[nro];
 		lcd.print(s);
 
 		lcd.setCursor(0,1);
-		char c[16];
+		stringstream convert;
+
 		if (focus) {
-			snprintf(c, 16, "     [%4d]     ", edit);
+			convert << "[" <<edit[nro] << "]";
+			s = convert.str();
+			lcd.print(s);
 		}
 		else {
-			snprintf(c, 16, "      %4d      ", edit);
+			convert << edit[nro];
+			s = convert.str();
+			lcd.print(s);
 		}
-		lcd.print(c);
 	}
 
 }

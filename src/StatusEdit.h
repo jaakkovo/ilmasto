@@ -9,6 +9,7 @@
 #define STATUSEDIT_H_
 
 #include "PropertyEdit.h"
+#include "LiquidCrystal.h"
 #include <string>
 #include <vector>
 
@@ -18,8 +19,12 @@ class StatusEdit : public PropertyEdit {
 public:
 	// Luokan konstruktori saa otsikon, alamenun otsikot, alarajat ja ylarajat. Luokan raja-muuttujat alustetaan paaohjelmassa annetuilla arvoilla.
 	StatusEdit(LiquidCrystal& lcd_, std::string editTitle, vector <string> tekstit, vector <int> ialarajat, vector <int> iylarajat) :  lcd(lcd_), title(editTitle), alamenut { tekstit }, alarajat{ ialarajat }, ylarajat{ iylarajat } {
-		value = alarajat;
-		edit = alarajat;
+		edit.push_back("Monday");
+		edit.push_back("Tuesday");
+		edit.push_back("Wednesday");
+		tietoja.push_back("!Tahan info!");
+		tietoja.push_back("!Tahan info!");
+		tietoja.push_back("!Tahan info!");
 		nro = 0;
 		focus = false;
 		kohdalla = false;
@@ -38,7 +43,7 @@ public:
 	void setKohdalla(bool kohdalla);
 
 	void display();
-	int getValue(int nro);
+	string getValue(int nro);
 	void setValue(int nro, string value);
 private:
 	void save();
@@ -50,7 +55,8 @@ private:
 	// Kun arvo tallennetaan, value:ksi laitetaan edit:in arvo.
 	vector<int> alarajat;
 	vector<int> ylarajat;
-	vector <string> edit;
+	vector<string> edit;
+	vector<string> tietoja;
 	vector<string> value;
 
 	// Taulukko joka sisaltaa alamenujen otsikot.

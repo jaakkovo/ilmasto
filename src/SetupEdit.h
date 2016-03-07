@@ -8,6 +8,7 @@
 #ifndef SETUPEDIT_H_
 #define SETUPEDIT_H_
 
+#include "LiquidCrystal.h"
 #include "PropertyEdit.h"
 #include <string>
 #include <vector>
