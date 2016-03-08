@@ -70,6 +70,7 @@ public:
   void clear();
   void home();
 
+  void print(int& i);
   void print(string& s); // Print määrittely
   void print(char *s); // Print määrittely charilla
 

@@ -21,7 +21,7 @@ public:
 	SetupEdit(LiquidCrystal& lcd_, std::string editTitle, vector <string> tekstit, vector <int> ialarajat, vector <int> iylarajat) :  lcd(lcd_), title(editTitle), alamenut { tekstit }, alarajat{ ialarajat }, ylarajat{ iylarajat } {
 		value = alarajat;
 		edit = alarajat;
-		nro = 0;
+		nro = alamenut.size()-1;
 		focus = false;
 		kohdalla = false;
 	}

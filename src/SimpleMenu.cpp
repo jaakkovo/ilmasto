@@ -39,11 +39,17 @@ void SimpleMenu::event(MenuItem::menuEvent e) {
 	// Eli jos valikkoa ei ole valittu, eikä focusta ole,
 	// Liikutaan päävalikossa. Lopussa näytetään nykyinen valikko.
 	if (!items1[position]->event(e)) {
-		if (e == MenuItem::down && position < (amountofitems - 1)) {
+		if (e == MenuItem::down) {
 			position++;
+			if (position > (amountofitems - 1)){
+				position = 0;
+			}
 		}
-		else if (e == MenuItem::up && position > 0) {
+		else if (e == MenuItem::up) {
 			position--;
+			if (position < 0){
+				position = amountofitems - 1;
+			}
 		}
 
 		items1[position]->event(MenuItem::show);
@@ -59,11 +65,17 @@ void SimpleMenu::event(SubMenuItem::menuEvent e) {
 	// Eli jos valikkoa ei ole valittu, eikä focusta ole,
 	// Liikutaan päävalikossa. Lopussa näytetään nykyinen valikko.
 	if(!items2[position]->event(e)) {
-		if (e == SubMenuItem::down && position < (amountofitems-1)) {
+		if (e == SubMenuItem::down) {
 			position++;
+			if (position > (amountofitems - 1)){
+				position = 0;
+			}
 		}
-		else if (e == SubMenuItem::up && position > 0) {
+		else if (e == SubMenuItem::up) {
 			position--;
+			if (position < 0){
+				position = amountofitems - 1;
+			}
 		}
 
 		items2[position]->event(SubMenuItem::show);

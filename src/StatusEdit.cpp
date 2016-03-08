@@ -51,33 +51,20 @@ void StatusEdit::display() {
 
 	stringstream convert;
 	stringstream ss;
+	lcd.clear();
+	lcd.setCursor(0,0);
 
 	if (!kohdalla) {
-		lcd.clear();
-		lcd.setCursor(0,0);
 		lcd.print(title);
-	}else if (kohdalla) {
-		lcd.clear();
-		lcd.setCursor(0,0);
-		std::string s;
-
-		ss << alamenut[nro];
-		s = ss.str();
-		lcd.print(s);
+	}else {
+		lcd.print(alamenut[nro]);
 		lcd.setCursor(0,1);
 		if (focus){
-			convert << tietoja[nro];
-			s = convert.str();
-			lcd.print(s);
+			lcd.print(tietoja[nro]);
 		}else{
-			convert << edit[nro];
-			s = convert.str();
-			lcd.print(s);
+			lcd.print(edit[nro]);
 		}
-
-
 	}
-
 }
 
 
@@ -89,10 +76,7 @@ void StatusEdit::save() {
 
 
 string StatusEdit::getValue(int nro) {
-	std::string s;
-	s = value[nro];
-
-	return (s);
+	return (value[nro]);
 }
 void StatusEdit::setValue(int nro, string value) {
 	edit[nro] = value;

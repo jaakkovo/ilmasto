@@ -25,7 +25,7 @@ public:
 		tietoja.push_back("!Tahan info!");
 		tietoja.push_back("!Tahan info!");
 		tietoja.push_back("!Tahan info!");
-		nro = 0;
+		nro = alamenut.size()-1;
 		focus = false;
 		kohdalla = false;
 	}
