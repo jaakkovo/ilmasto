@@ -1,11 +1,14 @@
-
 /*
 ===============================================================================
- Name        : main.c
- Author      : $(author)
- Version     :
- Copyright   : $(copyright)
- Description : main definition
+ Name        : Project Ilmasto
+ Author(s)   : Jaakko Voutilainen
+ 	 	 	 : Tom-Paul Tuomisto
+ 	 	 	 : Taneli Liljasto
+ 	 	 	 : Heikki Rajamäki
+ Version     : v0.9.x
+ Copyright   : Using this program against humanity or finnish law
+ 	 	 	 : is strictly prohibited.
+ Description : Ilmasto-project's control unit software.
 ===============================================================================
  */
 #if defined (__USE_LPCOPEN)
@@ -42,16 +45,53 @@
 static volatile int counter;
 static volatile uint32_t systicks;
 
+#define TICKRATE_HZ (1000)	/* 1000 ticks per second */
+
+// ADC:n määrittelyt
+static volatile bool adcdone = false;
+static volatile bool adcstart = false;
+
+volatile uint32_t a0;
+volatile uint32_t d0;
+volatile uint32_t a3;
+volatile uint32_t d3;
+volatile int kalib = 50; // Määrittää kalibrointirajan +-
+// ADC:n määrittelyt loppuuu
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 void SysTick_Handler(void)
 {
 	systicks++;
 	if(counter > 0) counter--;
+
+	// ADC systikki::begins
+	static uint32_t count;
+	adcstart = true;
+	count++;
+	// ADC systick::ends
+
 }
+
+// ADC -- Alkaa
+void ADC0A_IRQHandler(void)
+{
+	uint32_t pending;
+
+	/* Get pending interrupts */
+	pending = Chip_ADC_GetFlags(LPC_ADC0);
+
+	/* Sequence A completion interrupt */
+	if (pending & ADC_FLAGS_SEQA_INT_MASK) {
+		adcdone = true; }
+
+	/* Clear any pending interrupts */
+	Chip_ADC_ClearFlags(LPC_ADC0, pending);
+}
+// ADC -- Loppuu
 
 #ifdef __cplusplus
 }
@@ -151,10 +191,49 @@ int main(void) {
 	Chip_RIT_Init(LPC_RITIMER);
 	NVIC_EnableIRQ(RITIMER_IRQn);
 
-	SysTick_Config(Chip_Clock_GetSysTickClockRate() / 1000);
+	SysTick_Config(Chip_Clock_GetSysTickClockRate() / TICKRATE_HZ);
 
+	/* Set up SWO to PIO1_2 */
 	Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
 
+	// ADC:n ALUSTUS ALKAA TÄSTÄ
+	/* Setup ADC for 12-bit mode and normal power */
+	Chip_ADC_Init(LPC_ADC0, 0);
+
+	/* Setup for maximum ADC clock rate */
+	Chip_ADC_SetClockRate(LPC_ADC0, ADC_MAX_SAMPLE_RATE);
+
+	/* For ADC0, sequencer A will be used without threshold events.
+		   It will be triggered manually  */
+	Chip_ADC_SetupSequencer(LPC_ADC0, ADC_SEQA_IDX, (ADC_SEQ_CTRL_CHANSEL(0) | ADC_SEQ_CTRL_CHANSEL(3) | ADC_SEQ_CTRL_MODE_EOS));
+
+	/* For ADC0, select analog input pint for channel 0 on ADC0 */
+	Chip_ADC_SetADC0Input(LPC_ADC0, 0);
+
+	/* Use higher voltage trim for both ADC */
+	Chip_ADC_SetTrim(LPC_ADC0, ADC_TRIM_VRANGE_HIGHV);
+
+	/* Assign ADC0_0 to PIO1_8 via SWM (fixed pin) and ADC0_3 to PIO0_5 */
+	Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_0);
+	Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_3);
+
+	/* Need to do a calibration after initialization and trim */
+	Chip_ADC_StartCalibration(LPC_ADC0);
+	while (!(Chip_ADC_IsCalibrationDone(LPC_ADC0))) {}
+
+	/* Clear all pending interrupts and status flags */
+	Chip_ADC_ClearFlags(LPC_ADC0, Chip_ADC_GetFlags(LPC_ADC0));
+
+	/* Enable sequence A completion interrupts for ADC0 */
+	Chip_ADC_EnableInt(LPC_ADC0, ADC_INTEN_SEQA_ENABLE);
+
+	/* Enable related ADC NVIC interrupts */
+	NVIC_EnableIRQ(ADC0_SEQA_IRQn);
+
+	/* Enable sequencer */
+	Chip_ADC_EnableSequencer(LPC_ADC0, ADC_SEQA_IDX);
+
+	// ADC:n ALUSTUS LOPPUU
 
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
@@ -232,6 +311,23 @@ int main(void) {
 	int lukema = 1000000;
 
 	while(1){
+
+		// ADC alkaa!
+		while(!adcstart) __WFI();
+		adcstart = false;
+
+		Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
+		while(!adcdone) __WFI();
+		adcdone = false;
+
+		a0 = Chip_ADC_GetDataReg(LPC_ADC0, 0);
+		d0 = ADC_DR_RESULT(a0);
+		a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
+		d3 = ADC_DR_RESULT(a3);
+		// Uncommend the lower line to print values in to terminal ( hosting must be enabled )
+		// printf("a0 = %08X, a1 = %08X, d0 = %d, d1 = %d\n", a0, a3, d0, d3);
+		// ADC LOPPUU
+
 		if (lukema > 1){
 			lukema--;
 		}
@@ -240,7 +336,7 @@ int main(void) {
 			lcd.clear();
 			lcd.print("Time: ");
 		}
-			/*  TAAJUUDEN VAIHTELU KOMMENTOITU
+		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
 			uint8_t result;
 
 			// slave: read (2) 16-bit registers starting at register 102 to RX buffer
@@ -267,55 +363,66 @@ int main(void) {
 			// frequency is scaled:
 			// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
 			setFrequency(node, fa[i]);
-			 */
+		 */
 
-			// VALIKKO
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
-				}
-				menu.event(SubMenuItem::up);
+		// VALIKKO
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
-				}
-				menu.event(SubMenuItem::down);
+			menu.event(SubMenuItem::up);
+		}
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
-				}
-				lukema = 1000000;
-				menu.event(SubMenuItem::ok);
+			menu.event(SubMenuItem::down);
+		}
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				}
-				menu.event(SubMenuItem::back);
+			lukema = 1000000;
+			menu.event(SubMenuItem::ok);
+		}
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 			}
+			menu.event(SubMenuItem::back);
+		}
 
-			if (mode.getValue() == "Automatic"){
-				// Automaattiohjaus
-			}
+		if (mode.getValue() == "Automatic"){
+			// Automaattiohjaus
+		}
 
-			if (mode.getValue() == "Manual"){
-				// Manuaaliohjaus
-			}
+		if (mode.getValue() == "Manual"){
+			// Manuaaliohjaus
+		}
 
-			// Näin muutetaan statuksen arvoja:
-			// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
-			// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
-			//	if (jotain){
-			//		status.setValue[0, "Running OK"]
-			//	}
+		// Näin muutetaan statuksen arvoja:
+		// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
+		// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
+		//	if (jotain){
+		//		status.setValue[0, "Running OK"]
+		//	}
 
-			//	if (jotain){
-			//	status.setValue[1, "Connected"]
-			//	}
+		//	if (jotain){
+		//	status.setValue[1, "Connected"]
+		//	}
 
-			// Näin tarkastetaan asetettuja arvoja:
-			// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
-			//	if(setup.getValue(0) != asetettu_ala_arvo){
-			// Mitä tapahtuu jos arvo on muuttunut
-			//	}
+		// Näin tarkastetaan asetettuja arvoja:
+		// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
+		//	if(setup.getValue(0) != asetettu_ala_arvo){
+		// Mitä tapahtuu jos arvo on muuttunut
+		//	}
+
 	}
+
+	/* Tässä on kommentoituna ADC:n lopusta tuodut koodit, ei tietoa vielä
+	 * onko tarpeellisia.
+	 * 	// Force the counter to be placed into memory
+		volatile static int i = 0 ;
+		// Enter an infinite loop, just incrementing a counter
+		while(1) {
+		i++ ;	}
+	 */
+
 	return (0);
 }
