@@ -5,7 +5,7 @@
  	 	 	 : Tom-Paul Tuomisto
  	 	 	 : Taneli Liljasto
  	 	 	 : Heikki Rajamäki
- Version     : v0.9.x
+ Version     : v0.9.3 (10.3.16 13:43)
  Copyright   : Using this program against humanity or finnish law
  	 	 	 : is strictly prohibited.
  Description : Ilmasto-project's control unit software.
@@ -156,8 +156,20 @@ void Sleep(int ms)
 	}
 }
 
+void pressure(){
+	uint8_t pressureData[3];
+	uint8_t readPressureCmd = 0xF1;
+	int16_t pressure = 0;
+	​
+	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
+	/* Output temperature. */
+	pressure = (pressureData[0] << 8) | pressureData[1];
+	return pressure/240.0;
+}
+
 int main(void) {
 
+	int freq = 25;
 	// Alustetaan nappi up
 	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 10, (IOCON_MODE_PULLUP | IOCON_DIGMODE_EN | IOCON_INV_EN));
 	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 10);
@@ -388,8 +400,26 @@ int main(void) {
 			menu.event(SubMenuItem::back);
 		}
 
-		if (mode.getValue() == "Automatic"){
-			// Automaattiohjaus
+		if (mode.getValue() == "Automatic" ) {
+			// TÄHÄN AUTOMAATTIOHJAUS
+			// TÄHÄN VOI LAITTAA LÄMPÖTILAN MITTAUKSEN
+			if(pressure()){
+				printf("Pressure read over I2C is %.1f Pa\r\n",	pressure());
+				if(pressure()>1.0){
+					if(freq>0){
+						setFrequency(node,freq-1);
+					}
+				}
+				if(pressure()<1.0){
+					if(freq<50){
+						setFrequency(node,freq+1);
+					}
+				}
+			}
+			else {
+				printf("Error reading pressure.\r\n");
+			}
+			​
 		}
 
 		if (mode.getValue() == "Manual"){
