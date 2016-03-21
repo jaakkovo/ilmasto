@@ -44,6 +44,18 @@
 static volatile int counter;
 static volatile uint32_t systicks;
 
+// ADC:n määrittelyt
+static volatile bool adcdone = false;
+static volatile bool adcstart = false;
+
+volatile uint32_t a0;
+volatile uint32_t d0;
+volatile uint32_t a3;
+volatile uint32_t d3;
+volatile int kalib = 50; // Määrittää kalibrointirajan +-
+// ADC:n määrittelyt loppuuu
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,6 +65,13 @@ void SysTick_Handler(void)
 {
 	systicks++;
 	if(counter > 0) counter--;
+
+	// ADC systikki::begins
+	static uint32_t count;
+	adcstart = true;
+	count++;
+	// ADC systick::ends
+
 }
 
 #ifdef __cplusplus
@@ -119,6 +138,24 @@ void Sleep(int ms)
 }
 
 
+// ADC -- Alkaa
+void ADC0A_IRQHandler(void)
+{
+	uint32_t pending;
+
+	/* Get pending interrupts */
+	pending = Chip_ADC_GetFlags(LPC_ADC0);
+
+	/* Sequence A completion interrupt */
+	if (pending & ADC_FLAGS_SEQA_INT_MASK) {
+		adcdone = true; }
+
+	/* Clear any pending interrupts */
+	Chip_ADC_ClearFlags(LPC_ADC0, pending);
+}
+// ADC -- Loppuu
+
+
 double pressure(){
 	I2C i2c = I2C(0,100000);
 
@@ -170,6 +207,57 @@ int main(void) {
 	SysTick_Config(Chip_Clock_GetSysTickClockRate() / 1000);
 
 	Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
+
+
+
+
+
+
+	/* Set up SWO to PIO1_2 */
+		Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
+
+		// ADC:n ALUSTUS ALKAA TÄSTÄ
+		/* Setup ADC for 12-bit mode and normal power */
+		Chip_ADC_Init(LPC_ADC0, 0);
+
+		/* Setup for maximum ADC clock rate */
+		Chip_ADC_SetClockRate(LPC_ADC0, ADC_MAX_SAMPLE_RATE);
+
+		/* For ADC0, sequencer A will be used without threshold events.
+			   It will be triggered manually  */
+		Chip_ADC_SetupSequencer(LPC_ADC0, ADC_SEQA_IDX, (ADC_SEQ_CTRL_CHANSEL(0) | ADC_SEQ_CTRL_CHANSEL(3) | ADC_SEQ_CTRL_MODE_EOS));
+
+		/* For ADC0, select analog input pint for channel 0 on ADC0 */
+		Chip_ADC_SetADC0Input(LPC_ADC0, 0);
+
+		/* Use higher voltage trim for both ADC */
+		Chip_ADC_SetTrim(LPC_ADC0, ADC_TRIM_VRANGE_HIGHV);
+
+		/* Assign ADC0_0 to PIO1_8 via SWM (fixed pin) and ADC0_3 to PIO0_5 */
+		Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_0);
+		Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_3);
+
+		/* Need to do a calibration after initialization and trim */
+		Chip_ADC_StartCalibration(LPC_ADC0);
+		while (!(Chip_ADC_IsCalibrationDone(LPC_ADC0))) {}
+
+		/* Clear all pending interrupts and status flags */
+		Chip_ADC_ClearFlags(LPC_ADC0, Chip_ADC_GetFlags(LPC_ADC0));
+
+		/* Enable sequence A completion interrupts for ADC0 */
+		Chip_ADC_EnableInt(LPC_ADC0, ADC_INTEN_SEQA_ENABLE);
+
+		/* Enable related ADC NVIC interrupts */
+		NVIC_EnableIRQ(ADC0_SEQA_IRQn);
+
+		/* Enable sequencer */
+		Chip_ADC_EnableSequencer(LPC_ADC0, ADC_SEQA_IDX);
+
+		// ADC:n ALUSTUS LOPPUU
+
+
+
+
 
 
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
@@ -250,6 +338,30 @@ int main(void) {
 	string s = "";
 
 	while(1){
+
+
+
+		// ADC alkaa!
+		while(!adcstart) __WFI();
+		adcstart = false;
+
+		Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
+		while(!adcdone) __WFI();
+		adcdone = false;
+
+		a0 = Chip_ADC_GetDataReg(LPC_ADC0, 0);
+		d0 = ADC_DR_RESULT(a0);
+		a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
+		d3 = ADC_DR_RESULT(a3);
+		// Uncommend the lower line to print values in to terminal ( hosting must be enabled )
+		// printf("a0 = %08X, a1 = %08X, d0 = %d, d1 = %d\n", a0, a3, d0, d3);
+		// ADC LOPPUU
+
+
+
+
+
+
 		if (lukema > 1){
 			lukema--;
 		}
