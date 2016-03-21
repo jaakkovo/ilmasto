@@ -29,7 +29,7 @@ void SetupEdit::increment() {
 			nro++;
 		}
 	}
-
+	
 }
 
 void SetupEdit::decrement() {
@@ -67,22 +67,31 @@ void SetupEdit::setKohdalla(bool kohdalla) {
 
 void SetupEdit::display() {
 
-	lcd.clear();
-	lcd.setCursor(0,0);
-
 	if (!kohdalla) {
+		lcd.clear();
+		lcd.setCursor(0,0);
 		lcd.print(title);
-	} else {
-		lcd.print(alamenut[nro]);
+	}else if (kohdalla) {
+		lcd.clear();
+		lcd.setCursor(0,0);
+
+		// TESTAA TÄMÄ LÄPI
+		std::string s;
+		s = alamenut[nro];
+		lcd.print(s);
 
 		lcd.setCursor(0,1);
+		stringstream convert;
+
 		if (focus) {
-			lcd.print("[");
-			lcd.print(edit[nro]);
-			lcd.print("]");
+			convert << "[" <<edit[nro] << "]";
+			s = convert.str();
+			lcd.print(s);
 		}
 		else {
-			lcd.print(edit[nro]);
+			convert << edit[nro];
+			s = convert.str();
+			lcd.print(s);
 		}
 	}
 
@@ -94,6 +103,7 @@ void SetupEdit::display() {
 void SetupEdit::save() {
 	// set current value to be same as edit value
 	value = edit;
+	// todo: save current value for example to EEPROM for permanent storage
 }
 
 

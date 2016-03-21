@@ -273,34 +273,37 @@ int main(void) {
 	int j = 0;
 	const uint16_t fa[20] = { 1000, 2000, 3000, 3500, 4000, 5000, 7000, 8000, 8300, 10000, 10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000 };
 
-	// Näytön alustus ja alkuasetukset
-
 	LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
 
 	lcd.begin(16,2);
 	lcd.setCursor(0,0);
 
-	// Menu
-
 	SimpleMenu menu;
 
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
+	//vector <string> setupvalikot = { "Min", "Max", "Hertz", "Time set" };
+	//vector <string> statusvalikot = { "info_System", "info_ModBus", "info_Pressure_sensor"};
 
-	// Setup-valikko
 	static const string arr[] = { "Min", "Max", "Hertz", "Time set" };
 	vector<string> setupvalikot (arr, arr + sizeof(arr) / sizeof(arr[0]) );
 
-	// Status-valikko
 	static const string arr2[] ={ "info_System", "info_ModBus", "info_Pressure_sensor"};
 	vector<string> statusvalikot (arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]) );
 
-	// Ylarajat
+
+	// Alamenun kohtien ylarajat, muista sama järjestys!
+	//vector <int> ylarajat = { 10, 5, 2, 50 };
+
+	// Alamenun kohtien alarajat, muista sama järjestys!
+	//vector <int> alarajat = { 0, 0, 0, 0 };
+
+
 	static const int arr3[] = { 10, 5, 2, 50 };
 	vector<int> ylarajat (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
-	// Alarajat
 	static const int arr4[] = { 0, 0, 0, 0 };
 	vector<int> alarajat (arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]) );
+
 
 
 	// Luodaan menun kohdat. Menuille annetaan otsikko, alamenujen otsikot, alarajat ja ylarajat.
@@ -320,10 +323,11 @@ int main(void) {
 
 	//I2C i2c = I2C(0, );
 
-	int lukema = 1000000;
+	int lukema = 0;
 
 	while(1){
 
+<<<<<<< HEAD
 		// ADC alkaa!
 		while(!adcstart) __WFI();
 		adcstart = false;
@@ -349,6 +353,9 @@ int main(void) {
 			lcd.print("Time: ");
 		}
 		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
+=======
+			/*  TAAJUUDEN VAIHTELU KOMMENTOITU
+>>>>>>> parent of 3a4741b... v0.91
 			uint8_t result;
 
 			// slave: read (2) 16-bit registers starting at register 102 to RX buffer
@@ -386,10 +393,17 @@ int main(void) {
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			}
+<<<<<<< HEAD
 			menu.event(SubMenuItem::down);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+=======
+			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				}
+				menu.event(SubMenuItem::ok);
+>>>>>>> parent of 3a4741b... v0.91
 			}
 			lukema = 1000000;
 			menu.event(SubMenuItem::ok);
@@ -443,6 +457,26 @@ int main(void) {
 		// Mitä tapahtuu jos arvo on muuttunut
 		//	}
 
+<<<<<<< HEAD
+=======
+
+			// Näin muutetaan statuksen arvoja:
+			// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
+			// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
+			//	if (jotain){
+			//		status.setValue[0, "Running OK"]
+			//	}
+
+			//	if (jotain){
+			//	status.setValue[1, "Connected"]
+			//	}
+
+			// Näin tarkastetaan asetettuja arvoja:
+			// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
+			//	if(setup.getValue(0) != asetettu_ala_arvo){
+			// Mitä tapahtuu jos arvo on muuttunut
+			//	}
+>>>>>>> parent of 3a4741b... v0.91
 	}
 
 	/* Tässä on kommentoituna ADC:n lopusta tuodut koodit, ei tietoa vielä
