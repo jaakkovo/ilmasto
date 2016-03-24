@@ -137,6 +137,9 @@ void Sleep(int ms)
 	}
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ADC -- Alkaa
 void ADC0A_IRQHandler(void)
@@ -154,7 +157,9 @@ void ADC0A_IRQHandler(void)
 	Chip_ADC_ClearFlags(LPC_ADC0, pending);
 }
 // ADC -- Loppuu
-
+#ifdef __cplusplus
+}
+#endif
 
 double pressure(){
 	I2C i2c = I2C(0,100000);
@@ -165,7 +170,13 @@ double pressure(){
 	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
 	/* Output temperature. */
 	pressure = (pressureData[0] << 8) | pressureData[1];
-	return pressure/240.0;
+	return pressure/24000.0;
+}
+float temperature (uint32_t value){
+	value += 3800;
+	float temp = ((float)value / 16382.0);
+	temp = temp * 165.0;
+	return temp-40.0;
 }
 
 
@@ -200,61 +211,52 @@ int main(void) {
 #endif
 #endif
 
-
 	Chip_RIT_Init(LPC_RITIMER);
 	NVIC_EnableIRQ(RITIMER_IRQn);
 
 	SysTick_Config(Chip_Clock_GetSysTickClockRate() / 1000);
 
+	/* Set up SWO to PIO1_2 */
 	Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
 
+	// ADC:n ALUSTUS ALKAA TÄSTÄ
+	/* Setup ADC for 12-bit mode and normal power */
+	Chip_ADC_Init(LPC_ADC0, 0);
 
+	/* Setup for maximum ADC clock rate */
+	Chip_ADC_SetClockRate(LPC_ADC0, ADC_MAX_SAMPLE_RATE);
 
-
-
-
-	/* Set up SWO to PIO1_2 */
-		Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
-
-		// ADC:n ALUSTUS ALKAA TÄSTÄ
-		/* Setup ADC for 12-bit mode and normal power */
-		Chip_ADC_Init(LPC_ADC0, 0);
-
-		/* Setup for maximum ADC clock rate */
-		Chip_ADC_SetClockRate(LPC_ADC0, ADC_MAX_SAMPLE_RATE);
-
-		/* For ADC0, sequencer A will be used without threshold events.
+	/* For ADC0, sequencer A will be used without threshold events.
 			   It will be triggered manually  */
-		Chip_ADC_SetupSequencer(LPC_ADC0, ADC_SEQA_IDX, (ADC_SEQ_CTRL_CHANSEL(0) | ADC_SEQ_CTRL_CHANSEL(3) | ADC_SEQ_CTRL_MODE_EOS));
+	Chip_ADC_SetupSequencer(LPC_ADC0, ADC_SEQA_IDX, (ADC_SEQ_CTRL_CHANSEL(0) | ADC_SEQ_CTRL_CHANSEL(3) | ADC_SEQ_CTRL_MODE_EOS));
 
-		/* For ADC0, select analog input pint for channel 0 on ADC0 */
-		Chip_ADC_SetADC0Input(LPC_ADC0, 0);
+	/* For ADC0, select analog input pint for channel 0 on ADC0 */
+	Chip_ADC_SetADC0Input(LPC_ADC0, 0);
 
-		/* Use higher voltage trim for both ADC */
-		Chip_ADC_SetTrim(LPC_ADC0, ADC_TRIM_VRANGE_HIGHV);
+	/* Use higher voltage trim for both ADC */
+	Chip_ADC_SetTrim(LPC_ADC0, ADC_TRIM_VRANGE_HIGHV);
 
-		/* Assign ADC0_0 to PIO1_8 via SWM (fixed pin) and ADC0_3 to PIO0_5 */
-		Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_0);
-		Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_3);
+	/* Assign ADC0_0 to PIO1_8 via SWM (fixed pin) and ADC0_3 to PIO0_5 */
+	Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_0);
+	Chip_SWM_EnableFixedPin(SWM_FIXED_ADC0_3);
 
-		/* Need to do a calibration after initialization and trim */
-		Chip_ADC_StartCalibration(LPC_ADC0);
-		while (!(Chip_ADC_IsCalibrationDone(LPC_ADC0))) {}
+	/* Need to do a calibration after initialization and trim */
+	Chip_ADC_StartCalibration(LPC_ADC0);
+	while (!(Chip_ADC_IsCalibrationDone(LPC_ADC0))) {}
 
-		/* Clear all pending interrupts and status flags */
-		Chip_ADC_ClearFlags(LPC_ADC0, Chip_ADC_GetFlags(LPC_ADC0));
+	/* Clear all pending interrupts and status flags */
+	Chip_ADC_ClearFlags(LPC_ADC0, Chip_ADC_GetFlags(LPC_ADC0));
 
-		/* Enable sequence A completion interrupts for ADC0 */
-		Chip_ADC_EnableInt(LPC_ADC0, ADC_INTEN_SEQA_ENABLE);
+	/* Enable sequence A completion interrupts for ADC0 */
+	Chip_ADC_EnableInt(LPC_ADC0, ADC_INTEN_SEQA_ENABLE);
 
-		/* Enable related ADC NVIC interrupts */
-		NVIC_EnableIRQ(ADC0_SEQA_IRQn);
+	/* Enable related ADC NVIC interrupts */
+	NVIC_EnableIRQ(ADC0_SEQA_IRQn);
 
-		/* Enable sequencer */
-		Chip_ADC_EnableSequencer(LPC_ADC0, ADC_SEQA_IDX);
+	/* Enable sequencer */
+	Chip_ADC_EnableSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
-		// ADC:n ALUSTUS LOPPUU
-
+	// ADC:n ALUSTUS LOPPUU
 
 
 
@@ -308,7 +310,7 @@ int main(void) {
 	vector<string> statusvalikot (arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]) );
 
 	// Ylarajat
-	static const int arr3[] = { 10, 5, 2, 50 };
+	static const int arr3[] = { 10, 5, 50, 50 };
 	vector<int> ylarajat (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
 	// Alarajat
@@ -332,50 +334,92 @@ int main(void) {
 	menu.event(SubMenuItem::show);
 
 
-	int lukema = 1000000;
-	int freq = 10000;
-	stringstream ss;
+	int lukema = 50000;
+	int mod = 0;
+	int freq = 0;
 	string s = "";
+	string d = "";
+	int hertz = 0;
+	setFrequency(node, 400*hertz);
 
 	while(1){
 
 
 
-		// ADC alkaa!
-		while(!adcstart) __WFI();
-		adcstart = false;
-
-		Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
-		while(!adcdone) __WFI();
-		adcdone = false;
-
-		a0 = Chip_ADC_GetDataReg(LPC_ADC0, 0);
-		d0 = ADC_DR_RESULT(a0);
-		a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
-		d3 = ADC_DR_RESULT(a3);
 		// Uncommend the lower line to print values in to terminal ( hosting must be enabled )
 		// printf("a0 = %08X, a1 = %08X, d0 = %d, d1 = %d\n", a0, a3, d0, d3);
 		// ADC LOPPUU
-
-
-
-
-
 
 		if (lukema > 1){
 			lukema--;
 		}
 		if (lukema == 1){
+			Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
+
+			// ADC alkaa!
+			while(!adcdone) __WFI();
+			adcdone = false;
+
+			a0 = Chip_ADC_GetDataReg(LPC_ADC0, 0);
+			d0 = ADC_DR_RESULT(a0);
+
+			a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
+			d3 = ADC_DR_RESULT(a3);
 			lukema = 0;
 			lcd.clear();
 
+			stringstream ss;
 
-		    ss << pressure();
-		    ss >> s;
+			ss.precision( 3 );
+			ss << temperature(d0);
+			ss >> s;
 
+			lcd.setCursor(0,0);
+			lcd.print("Temp:");
 			lcd.print(s);
+
+			if (mode.getValue() == "Manual"){
+				lcd.print(" ");
+				lcd.print("Mode:M");
+			}
+
+			if (mode.getValue() == "Automatic"){
+				lcd.print(" ");
+				lcd.print("Mode:A");
+			}
+
+
+			stringstream dd;
+
+			dd.precision( 3 );
+			dd << pressure();
+			dd >> d;
+			lcd.setCursor(0,1);
+
+			lcd.print("Pressure:");
+			lcd.print(d);
+
+
+			if (mode.getValue() == "Automatic" ) {
+				setFrequency(node,hertz*400);
+
+				if(pressure()>setup.getValue(1)){
+					if (hertz > 0){
+						hertz--;
+					}
+				}
+
+				if(pressure()<setup.getValue(0)){
+
+					if (hertz < 50){
+						hertz++;
+					}
+
+				}
+			}
+			lukema = 500000;
 		}
-			/*  TAAJUUDEN VAIHTELU KOMMENTOITU
+		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
 			uint8_t result;
 
 			// slave: read (2) 16-bit registers starting at register 102 to RX buffer
@@ -402,67 +446,60 @@ int main(void) {
 			// frequency is scaled:
 			// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
 			setFrequency(node, fa[i]);
-			 */
+		 */
 
-			// VALIKKO
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
-				}
-				menu.event(SubMenuItem::up);
+		// VALIKKO
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
-				}
-				menu.event(SubMenuItem::down);
+			lukema = 500000;
+			menu.event(SubMenuItem::up);
+		}
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
-				}
-				lukema = 1000000;
-				menu.event(SubMenuItem::ok);
+			lukema = 500000;
+			menu.event(SubMenuItem::down);
+		}
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 			}
-			if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
-				}
-				menu.event(SubMenuItem::back);
+			lukema = 500000;
+			menu.event(SubMenuItem::ok);
+		}
+		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 			}
+			lukema = 500000;
+			menu.event(SubMenuItem::back);
+		}
 
-			if (mode.getValue() == "Automatic" ) {
-				// TÄHÄN AUTOMAATTIOHJAUS
 
-					printf("Pressure read over I2C is %.1f Pa\r\n",	pressure());
-					if(pressure()>1.0){
-						if(freq>0){
-						//	setFrequency(node,freq-400);
-						}
-					}
-					if(pressure()<1.0){
-						if(freq<20000){
-						//   setFrequency(node,freq+400);
-						}
-					}
+
+		if (mode.getValue() == "Manual" ) {
+			if (setup.getValue(2) != hertz){
+				hertz = setup.getValue(2);
+				setFrequency(node,hertz*400);
 			}
+		}
 
-			if (mode.getValue() == "Manual"){
-				// Manuaaliohjaus
-			}
 
-			// Näin muutetaan statuksen arvoja:
-			// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
-			// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
-			//	if (jotain){
-			//		status.setValue[0, "Running OK"]
-			//	}
+		// Näin muutetaan statuksen arvoja:
+		// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
+		// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
+		//	if (jotain){
+		//		status.setValue[0, "Running OK"]
+		//	}
 
-			//	if (jotain){
-			//	status.setValue[1, "Connected"]
-			//	}
+		//	if (jotain){
+		//	status.setValue[1, "Connected"]
+		//	}
 
-			// Näin tarkastetaan asetettuja arvoja:
-			// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
-			//	if(setup.getValue(0) != asetettu_ala_arvo){
-			// Mitä tapahtuu jos arvo on muuttunut
-			//	}
+		// Näin tarkastetaan asetettuja arvoja:
+		// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
+		//	if(setup.getValue(0) != asetettu_ala_arvo){
+		// Mitä tapahtuu jos arvo on muuttunut
+		//	}
 	}
 	return (0);
 }
