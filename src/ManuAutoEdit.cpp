@@ -11,8 +11,8 @@
 using namespace std;
 
 ManuAutoEdit::ManuAutoEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
-	value = "Manual";
-	edit = "Manual";
+	value = "Idle";
+	edit = "Idle";
 	focus = false;
 }
 
@@ -25,15 +25,21 @@ void ManuAutoEdit::increment() {
 		if (edit == "Automatic") {
 			edit = "Manual";
 		}
+		else if (edit == "Manual") {
+			edit = "Idle";
+		}
 		else {
-			edit = "Automatic";
+			edit = "Idle";
 		}
 	}
 }
 
 void ManuAutoEdit::decrement() {
 	if (focus) {
-		if (edit == "Automatic") {
+		if (edit == "Manual") {
+			edit = "Automatic";
+		}
+		else if (edit == "Idle") {
 			edit = "Manual";
 		}
 		else {

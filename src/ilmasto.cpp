@@ -219,6 +219,7 @@ int main(void) {
 	/* Set up SWO to PIO1_2 */
 	Chip_SWM_MovablePortPinAssign(SWM_SWO_O, 1, 2);
 
+
 	// ADC:n ALUSTUS ALKAA TÄSTÄ
 	/* Setup ADC for 12-bit mode and normal power */
 	Chip_ADC_Init(LPC_ADC0, 0);
@@ -261,7 +262,6 @@ int main(void) {
 
 
 
-
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
 	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
@@ -284,10 +284,6 @@ int main(void) {
 	printRegister(node, 3); // for debugging
 
 
-	int i = 0;
-	int j = 0;
-	const uint16_t fa[20] = { 1000, 2000, 3000, 3500, 4000, 5000, 7000, 8000, 8300, 10000, 10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000 };
-
 	// Näytön alustus ja alkuasetukset
 
 	LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
@@ -302,30 +298,28 @@ int main(void) {
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
 
 	// Setup-valikko
-	static const string arr[] = { "Min", "Max", "Hertz", "Time set" };
+	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (s)" };
 	vector<string> setupvalikot (arr, arr + sizeof(arr) / sizeof(arr[0]) );
 
 	// Status-valikko
-	static const string arr2[] ={ "info_System", "info_ModBus", "info_Pressure_sensor"};
+	static const string arr2[] ={ "info_System", "info_Temperature", "info_Pressure" };
 	vector<string> statusvalikot (arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]) );
 
 	// Ylarajat
-	static const int arr3[] = { 10, 5, 50, 50 };
+	static const int arr3[] = { 50, 135, 135, 50, 50, 3600 };
 	vector<int> ylarajat (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
 	// Alarajat
-	static const int arr4[] = { 0, 0, 0, 0 };
+	static const int arr4[] = { 0, -135, -135, 0, 0, 0 };
 	vector<int> alarajat (arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]) );
 
 
 	// Luodaan menun kohdat. Menuille annetaan otsikko, alamenujen otsikot, alarajat ja ylarajat.
-	OnOffEdit power = OnOffEdit(lcd, "Power");
 	ManuAutoEdit mode = ManuAutoEdit(lcd, "Mode");
 	SetupEdit setup = SetupEdit(lcd, "Setup", setupvalikot, alarajat, ylarajat);
 	StatusEdit status = StatusEdit(lcd, "Status", statusvalikot, alarajat, ylarajat);
 
 	// Päävalikkoon lisätään kohtia. True / False viimeisenä parametrina kertoo, onko valikolla alavalikko.
-	menu.addItem(new SubMenuItem(power, false));
 	menu.addItem(new SubMenuItem(mode, false));
 	menu.addItem(new SubMenuItem(setup, true));
 	menu.addItem(new SubMenuItem(status, true));
@@ -334,87 +328,125 @@ int main(void) {
 	menu.event(SubMenuItem::show);
 
 
-	int lukema = 50000;
+	int lukema = 500000;
 	int mod = 0;
+
 	int freq = 0;
 	string s = "";
 	string d = "";
 	int hertz = 0;
-	setFrequency(node, 400*hertz);
+
+	try {
+		setFrequency(node, 400 * hertz);
+		status.setValue(0, "OK");
+	}
+	catch (...) {
+		status.setValue(0, "Error");
+	}
 
 	while(1){
 
-
-
-		// Uncommend the lower line to print values in to terminal ( hosting must be enabled )
-		// printf("a0 = %08X, a1 = %08X, d0 = %d, d1 = %d\n", a0, a3, d0, d3);
-		// ADC LOPPUU
-
 		if (lukema > 1){
+			mod++;
 			lukema--;
 		}
 		if (lukema == 1){
-			Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
+			try {
+				Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
-			// ADC alkaa!
-			while(!adcdone) __WFI();
-			adcdone = false;
+				// ADC alkaa!
+				while (!adcdone) __WFI();
+				adcdone = false;
 
-			a0 = Chip_ADC_GetDataReg(LPC_ADC0, 0);
-			d0 = ADC_DR_RESULT(a0);
+				a0 = Chip_ADC_GetDataReg(LPC_ADC0, 0);
+				d0 = ADC_DR_RESULT(a0);
 
-			a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
-			d3 = ADC_DR_RESULT(a3);
-			lukema = 0;
-			lcd.clear();
+				a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
+				d3 = ADC_DR_RESULT(a3);
 
-			stringstream ss;
 
-			ss.precision( 3 );
-			ss << temperature(d0);
-			ss >> s;
+				lukema = 0;
+				lcd.clear();
 
-			lcd.setCursor(0,0);
-			lcd.print("Temp:");
-			lcd.print(s);
+				stringstream ss;
+
+				ss.precision(3);
+				ss << temperature(d0);
+				ss >> s;
+
+				lcd.setCursor(0, 0);
+				lcd.print("Temp:");
+				lcd.print(s);
+
+				status.setValue(1, "OK");
+			}
+			catch (...) {
+				status.setValue(1, "Error");
+			}
 
 			if (mode.getValue() == "Manual"){
 				lcd.print(" ");
 				lcd.print("Mode:M");
-			}
-
-			if (mode.getValue() == "Automatic"){
+			}else if (mode.getValue() == "Automatic"){
 				lcd.print(" ");
 				lcd.print("Mode:A");
+			}else if (mode.getValue() == "Idle") {
+				lcd.print(" ");
+				lcd.print("Mode:I");
 			}
 
 
-			stringstream dd;
+			try {
+				stringstream dd;
 
-			dd.precision( 3 );
-			dd << pressure();
-			dd >> d;
-			lcd.setCursor(0,1);
+				dd.precision(3);
+				dd << pressure();
+				dd >> d;
+				lcd.setCursor(0, 1);
 
-			lcd.print("Pressure:");
-			lcd.print(d);
+				lcd.print("Pressure:");
+				lcd.print(d);
 
+				status.setValue(2, "OK");
+			}
+			catch (...) {
+				status.setValue(2, "Error");
+			}
 
-			if (mode.getValue() == "Automatic" ) {
-				setFrequency(node,hertz*400);
+			if (mod > (100000 * setup.getValue(5))) {
+				mod = 0;
+				if (mode.getValue() == "Automatic") {
 
-				if(pressure()>setup.getValue(1)){
-					if (hertz > 0){
-						hertz--;
+					// Tarkistukset. Mikäli hertzit on annettujen rajojen ulkopuolella, asetetaan se raja-arvoon.
+					if (hertz < setup.getValue(3)) {
+						hertz = setup.getValue(3);
 					}
-				}
 
-				if(pressure()<setup.getValue(0)){
-
-					if (hertz < 50){
-						hertz++;
+					if (hertz > setup.getValue(4)) {
+						hertz = setup.getValue(4);
 					}
 
+					try {
+						setFrequency(node, 400 * hertz);
+						status.setValue(0, "OK");
+					}
+					catch (...) {
+						status.setValue(0, "Error");
+					}
+
+					if (pressure() > setup.getValue(2)) {
+						if (hertz > setup.getValue(3)) {
+							hertz--;
+						}
+					}
+
+					if (pressure() < setup.getValue(1)) {
+
+						if (hertz < setup.getValue(4)) {
+							hertz++;
+						}
+
+					}
 				}
 			}
 			lukema = 500000;
@@ -477,9 +509,28 @@ int main(void) {
 
 
 		if (mode.getValue() == "Manual" ) {
-			if (setup.getValue(2) != hertz){
-				hertz = setup.getValue(2);
-				setFrequency(node,hertz*400);
+			if (setup.getValue(0) != hertz){
+				hertz = setup.getValue(0);
+				try {
+					setFrequency(node, 400 * hertz);
+					status.setValue(0, "OK");
+				}
+				catch (...) {
+					status.setValue(0, "Error");
+				}
+			}
+		}
+
+		if (mode.getValue() == "Idle") {
+			if (hertz != 0) {
+				hertz = 0;
+				try {
+					setFrequency(node, 400 * hertz);
+					status.setValue(0, "OK");
+				}
+				catch (...) {
+					status.setValue(0, "Error");
+				}
 			}
 		}
 
