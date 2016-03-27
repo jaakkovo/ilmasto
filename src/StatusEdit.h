@@ -46,23 +46,26 @@ public:
 	string getValue(int nro);
 	void setValue(int nro, string value);
 private:
-	void save();
+	
+	LiquidCrystal& lcd;
 
 	// Itse paaotsikko (Setup)
 	string title;
+
+	// Taulukko joka sisaltaa alamenujen otsikot.
+	vector<string> alamenut;
 
 	// Luokkamuuttujina alarajat, ylarajat, seka jokaisen kohdan arvot, seka muutettu arvo (jota ei ole viela tallennettu).
 	// Kun arvo tallennetaan, value:ksi laitetaan edit:in arvo.
 	vector<int> alarajat;
 	vector<int> ylarajat;
+
 	vector<string> edit;
 	vector<string> tietoja;
 	vector<string> value;
 
-	// Taulukko joka sisaltaa alamenujen otsikot.
-	vector<string> alamenut;
+	void save();
 
-	LiquidCrystal& lcd;
 	int nro;
 
 	bool focus;

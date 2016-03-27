@@ -335,7 +335,6 @@ int main(void) {
 	// Display first menu item
 	menu.event(SubMenuItem::show);
 
-	int freq = 0;
 	string s = "";
 	string d = "";
 	int hertz = 0;
