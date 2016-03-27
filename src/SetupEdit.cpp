@@ -94,7 +94,7 @@ void SetupEdit::save() {
 }
 
 int SetupEdit::getValue(int nrob) {
-	return value[nrob];
+	return (value[nrob]);
 }
 void SetupEdit::setValue(int nrob, int value1) {
 	edit[nrob] = value1;
