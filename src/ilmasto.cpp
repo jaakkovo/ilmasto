@@ -348,13 +348,11 @@ int main(void) {
 	int lukema = 5;
 	int mod = 0;
 
-	try {
+
 		setFrequency(node, 400 * hertz);
 		status.setValue(0, "OK");
-	}
-	catch (...) {
-		status.setValue(0, "Error");
-	}
+
+
 
 	// Alkuasetukset
 	// Moodi
@@ -402,7 +400,7 @@ int main(void) {
 		}
 
 		if (lukema == 0){
-			try {
+
 				Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
 				// ADC alkaa!
@@ -431,9 +429,6 @@ int main(void) {
 
 				status.setValue(1, "OK");
 			}
-			catch (...) {
-				status.setValue(1, "Error");
-			}
 
 			if (mode.getValue() == "Manual"){
 				lcd.print(" ");
@@ -447,7 +442,6 @@ int main(void) {
 			}
 
 
-			try {
 				stringstream dd;
 
 				dd.precision(3);
@@ -459,12 +453,10 @@ int main(void) {
 				lcd.print(d);
 
 				status.setValue(2, "OK");
-			}
-			catch (...) {
-				status.setValue(2, "Error");
-			}
 
-			if (mod > setup.getValue(5)) {
+
+
+		if (mod > setup.getValue(5)) {
 				mod = 0;
 				if (mode.getValue() == "Automatic") {
 
@@ -477,13 +469,9 @@ int main(void) {
 						hertz = setup.getValue(4);
 					}
 
-					try {
+
 						setFrequency(node, 400 * hertz);
 						status.setValue(0, "OK");
-					}
-					catch (...) {
-						status.setValue(0, "Error");
-					}
 
 					if (pressure() > setup.getValue(2)) {
 						if (hertz > setup.getValue(3)) {
@@ -547,28 +535,22 @@ int main(void) {
 		if (mode.getValue() == "Manual" ) {
 			if (setup.getValue(0) != hertz){
 				hertz = setup.getValue(0);
-				try {
+
 					setFrequency(node, 400 * hertz);
 					status.setValue(0, "OK");
-				}
-				catch (...) {
-					status.setValue(0, "Error");
-				}
+
+
 			}
 		}
 
 		if (mode.getValue() == "Idle") {
 			if (hertz != 0) {
 				hertz = 0;
-				try {
 					setFrequency(node, 400 * hertz);
 					status.setValue(0, "OK");
-				}
-				catch (...) {
-					status.setValue(0, "Error");
-				}
-			}
+
+							}
 		}
-	}
+
 	return (0);
 }
