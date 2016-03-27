@@ -429,72 +429,70 @@ int main(void) {
 			lcd.print(s);
 
 			status.setValue(1, "OK");
-		}
-
-		if (mode.getValue() == "Manual") {
-			lcd.print(" ");
-			lcd.print("Mode:M");
-		}
-		else if (mode.getValue() == "Automatic") {
-			lcd.print(" ");
-			lcd.print("Mode:A");
-		}
-		else if (mode.getValue() == "Idle") {
-			lcd.print(" ");
-			lcd.print("Mode:I");
-		}
 
 
-		stringstream dd;
-
-		dd.precision(3);
-		dd << pressure();
-		dd >> d;
-		lcd.setCursor(0, 1);
-
-		lcd.print("Pressure:");
-		lcd.print(d);
-
-		status.setValue(2, "OK");
-
-
-
-		if (mod > setup.getValue(5)) {
-			mod = 0;
-			if (mode.getValue() == "Automatic") {
-
-				// Tarkistukset. Mikäli hertzit on annettujen rajojen ulkopuolella, asetetaan se raja-arvoon.
-				if (hertz < setup.getValue(3)) {
-					hertz = setup.getValue(3);
-				}
-
-				if (hertz > setup.getValue(4)) {
-					hertz = setup.getValue(4);
-				}
+			if (mode.getValue() == "Manual") {
+				lcd.print(" ");
+				lcd.print("Mode:M");
+			}
+			else if (mode.getValue() == "Automatic") {
+				lcd.print(" ");
+				lcd.print("Mode:A");
+			}
+			else if (mode.getValue() == "Idle") {
+				lcd.print(" ");
+				lcd.print("Mode:I");
+			}
 
 
-				setFrequency(node, 400 * hertz);
-				status.setValue(0, "OK");
+			stringstream dd;
 
-				if (pressure() > setup.getValue(2)) {
-					if (hertz > setup.getValue(3)) {
-						hertz--;
-					}
-				}
+			dd.precision(3);
+			dd << pressure();
+			dd >> d;
+			lcd.setCursor(0, 1);
 
-				if (pressure() < setup.getValue(1)) {
+			lcd.print("Pressure:");
+			lcd.print(d);
 
-					if (hertz < setup.getValue(4)) {
-						hertz++;
+			status.setValue(2, "OK");
+
+
+
+			if (mod >= setup.getValue(5)) {
+				if (mode.getValue() == "Automatic") {
+
+					// Tarkistukset. Mikäli hertzit on annettujen rajojen ulkopuolella, asetetaan se raja-arvoon.
+					if (hertz < setup.getValue(3)) {
+						hertz = setup.getValue(3);
 					}
 
+					if (hertz > setup.getValue(4)) {
+						hertz = setup.getValue(4);
+					}
+
+
+					setFrequency(node, 400 * hertz);
+					status.setValue(0, "OK");
+
+					if (pressure() > setup.getValue(2)) {
+						if (hertz > setup.getValue(3)) {
+							hertz--;
+						}
+					}
+
+					if (pressure() < setup.getValue(1)) {
+
+						if (hertz < setup.getValue(4)) {
+							hertz++;
+						}
+
+					}
 				}
+				mod = 0;
 			}
 			lukema = 5;
 		}
-
-
-
 
 
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
