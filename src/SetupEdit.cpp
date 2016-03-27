@@ -88,20 +88,15 @@ void SetupEdit::display() {
 
 }
 
-
-
-
 void SetupEdit::save() {
 	// set current value to be same as edit value
 	value = edit;
 }
 
-
-int SetupEdit::getValue(int nro) {
-	int palautus = value[nro];
-	return palautus;
+int SetupEdit::getValue(int nrob) {
+	return value[nrob];
 }
-void SetupEdit::setValue(int nro, int value1) {
-	edit[nro] = value1;
+void SetupEdit::setValue(int nrob, int value1) {
+	edit[nrob] = value1;
 	save();
 }

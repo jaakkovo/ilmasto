@@ -39,8 +39,8 @@ public:
 	void setKohdalla(bool kohdalla);
 
 	void display();
-	int getValue(int nro);
-	void setValue(int nro, int value1);
+	int getValue(int nrob);
+	void setValue(int nrob, int value1);
 private:
 	void save();
 
@@ -51,7 +51,7 @@ private:
 	// Kun arvo tallennetaan, value:ksi laitetaan edit:in arvo.
 	vector<int> alarajat;
 	vector<int> ylarajat;
-	vector <int> edit;
+	vector<int> edit;
 	vector<int> value;
 
 	// Taulukko joka sisaltaa alamenujen otsikot.
