@@ -270,10 +270,6 @@ int main(void) {
 	Chip_ADC_EnableSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
 	// ADC:n ALUSTUS LOPPUU
-
-
-
-
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
 	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
@@ -310,7 +306,7 @@ int main(void) {
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
 
 	// Setup-valikko
-	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (m)", "Default settings" };
+	static const string arr[] = { "Hertz", "Pressure Min(Pa)", "Pressure Max(Pa)", "Hertz Min", "Hertz Max", "Interval (min)", "Default settings" };
 	vector<string> setupvalikot(arr, arr + sizeof(arr) / sizeof(arr[0]));
 
 	// Status-valikko
@@ -327,9 +323,9 @@ int main(void) {
 
 
 	// Luodaan menun kohdat. Menuille annetaan otsikko, alamenujen otsikot, alarajat ja ylarajat.
-	ManuAutoEdit mode = ManuAutoEdit(lcd, "Mode");
-	SetupEdit setup = SetupEdit(lcd, "Setup", setupvalikot, alarajat, ylarajat);
-	StatusEdit status = StatusEdit(lcd, "Status", statusvalikot, alarajat, ylarajat);
+	ManuAutoEdit mode = ManuAutoEdit(lcd, "Mode:");
+	SetupEdit setup = SetupEdit(lcd, "Setup >", setupvalikot, alarajat, ylarajat);
+	StatusEdit status = StatusEdit(lcd, "Status >", statusvalikot, alarajat, ylarajat);
 
 	// Päävalikkoon lisätään kohtia. True / False viimeisenä parametrina kertoo, onko valikolla alavalikko.
 	menu.addItem(new SubMenuItem(mode, false));
@@ -349,11 +345,8 @@ int main(void) {
 	int lukema = 5;
 	int mod = 0;
 
-
-	setFrequency(node, 400 * hertz);
+	setFrequency(node, (400 * hertz));
 	status.setValue(0, "OK");
-
-
 
 	// Alkuasetukset
 	// Moodi
@@ -414,7 +407,6 @@ int main(void) {
 			a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
 			d3 = ADC_DR_RESULT(a3);
 
-
 			lukema = 0;
 			lcd.clear();
 
@@ -430,7 +422,6 @@ int main(void) {
 
 			status.setValue(1, "OK");
 
-
 			if (mode.getValue() == "Manual") {
 				lcd.print(" ");
 				lcd.print("Mode:M");
@@ -443,7 +434,6 @@ int main(void) {
 				lcd.print(" ");
 				lcd.print("Mode:I");
 			}
-
 
 			stringstream dd;
 
@@ -484,7 +474,7 @@ int main(void) {
 						}
 					}
 
-					setFrequency(node, 400 * hertz);
+					setFrequency(node, (400 * hertz));
 					status.setValue(0, "OK");
 				}
 				mod = 0;
@@ -536,15 +526,13 @@ int main(void) {
 			if (setup.getValue(0) != hertz) {
 				hertz = setup.getValue(0);
 
-				setFrequency(node, 400 * hertz);
+				setFrequency(node, (400 * hertz));
 				status.setValue(0, "OK");
 			}
-		}
-
-		if (mode.getValue() == "Idle") {
+		}else if (mode.getValue() == "Idle") {
 			if (hertz != 0) {
 				hertz = 0;
-				setFrequency(node, 400 * hertz);
+				setFrequency(node, (400 * hertz));
 				status.setValue(0, "OK");
 			}
 		}
