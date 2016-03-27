@@ -98,7 +98,8 @@ void SetupEdit::save() {
 
 
 int SetupEdit::getValue(int nro) {
-	return (value[nro]);
+	int palautus = value[nro];
+	return palautus;
 }
 void SetupEdit::setValue(int nro, int value1) {
 	edit[nro] = value1;
