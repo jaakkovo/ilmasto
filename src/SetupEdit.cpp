@@ -53,7 +53,7 @@ void SetupEdit::accept() {
 }
 
 void SetupEdit::cancel() {
-	edit = value;
+	edit[nro] = value[nro];
 }
 
 
@@ -90,7 +90,7 @@ void SetupEdit::display() {
 
 void SetupEdit::save() {
 	// set current value to be same as edit value
-	value = edit;
+	value[nro] = edit[nro];
 }
 
 int SetupEdit::getValue(int nrob) {
