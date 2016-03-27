@@ -1,43 +1,68 @@
 /*
- * SetupEdit.h
+ * SubEdit.h
  *
- *  Created on: 18.2.2016
- *      Author: Jaakko
+ *  Created on: 2.2.2016
+ *      Author: krl
  */
 
 #ifndef SETUPEDIT_H_
 #define SETUPEDIT_H_
 
-#include "PropertyEdit.h"
-#include "BarGraph.h"
-#include "SimpleMenu.h"
-#include "MenuItem.h"
 #include "LiquidCrystal.h"
+#include "PropertyEdit.h"
+#include <string>
+#include <vector>
+
+using namespace std;
 
 class SetupEdit : public PropertyEdit {
 public:
-	SetupEdit(LiquidCrystal& lcd_, std::string editTitle);
+	// Luokan konstruktori saa otsikon, alamenun otsikot, alarajat ja ylarajat. Luokan raja-muuttujat alustetaan paaohjelmassa annetuilla arvoilla.
+	SetupEdit(LiquidCrystal& lcd_, std::string editTitle, vector <string> tekstit, vector <int> ialarajat, vector <int> iylarajat) :  lcd(lcd_), title(editTitle), alamenut { tekstit }, alarajat{ ialarajat }, ylarajat{ iylarajat } {
+		value = alarajat;
+		edit = alarajat;
+		nro = alamenut.size()-1;
+		focus = false;
+		kohdalla = false;
+	}
+
 	virtual ~SetupEdit();
-	void accept();
-	void cancel();
 	void increment();
 	void decrement();
-	void setFocus(bool focus);
-	void display();
-	string getValue();
-	void setValue(string value);
+	void accept();
+	void cancel();
 
+	// setFocus maarittaa, onko arvo valittu vai ei.
+	void setFocus(bool focus);
+
+	// setKohdalla maarittaa, onko Setup-valikko avattu.
+	void setKohdalla(bool kohdalla);
+
+	void display();
+	int getValue(int nro);
+	void setValue(int nro, int value);
 private:
 	void save();
-	void displayEditValue();
+
+	// Itse paaotsikko ("Setup")
+	string title;
+
+	// Luokkamuuttujina alarajat, ylarajat, seka jokaisen kohdan arvot, seka muutettu arvo (jota ei ole viela tallennettu).
+	// Kun arvo tallennetaan, value:ksi laitetaan edit:in arvo.
+	vector<int> alarajat;
+	vector<int> ylarajat;
+	vector <int> edit;
+	vector<int> value;
+
+	// Taulukko joka sisaltaa alamenujen otsikot.
+	vector<string> alamenut;
+
 	LiquidCrystal& lcd;
-	SimpleMenu setup_menu;
-	std::string title;
-	string value;
-	string edit;
-	string currentmenu;
+	int nro;
+
 	bool focus;
-	bool focus_alempi;
+	bool kohdalla;
+
 };
 
 #endif /* SETUPEDIT_H_ */

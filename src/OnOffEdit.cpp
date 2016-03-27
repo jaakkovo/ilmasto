@@ -19,18 +19,24 @@ OnOffEdit::~OnOffEdit() {
 }
 
 void OnOffEdit::increment() {
-	if (value == true){
-		edit = false;
-	} else{
-		edit = true;
+	if (focus) {
+		if (edit == true) {
+			edit = false;
+		}
+		else {
+			edit = true;
+		}
 	}
 }
 
 void OnOffEdit::decrement() {
-	if (value == true){
-		edit = false;
-	} else{
-		edit = true;
+	if (focus) {
+		if (edit == true) {
+			edit = false;
+		}
+		else {
+			edit = true;
+		}
 	}
 }
 
@@ -64,7 +70,7 @@ void OnOffEdit::display() {
 void OnOffEdit::save() {
 
 	if (edit == true) {
-		// PIDEÄÄN POWERI PÄÄLLÄ
+		// PIDEï¿½ï¿½N POWERI Pï¿½ï¿½LLï¿½
 	}
 	if (edit == false) {
 		// SAMMUTETAAN LAITE
@@ -74,7 +80,7 @@ void OnOffEdit::save() {
 }
 
 bool OnOffEdit::getValue() {
-	return value;
+	return (value);
 }
 
 void OnOffEdit::setValue(bool value) {

@@ -30,16 +30,18 @@ bool MenuItem::event(menuEvent e) {
 		break;
 	case back:
 		if(focus) {
-			focus = false;
 			pe.cancel();
+			focus = false;
 		}
 		else {
+			pe.cancel();
 			handled = false;
+			focus = false;
 		}
 		pe.setFocus(focus);
 		break;
 	case show:
-		pe.setFocus(focus);
+		//pe.setFocus(focus);// TÄSSÄ VIKA
 		break;
 	case up:
 		if(focus) pe.increment();
@@ -52,6 +54,6 @@ bool MenuItem::event(menuEvent e) {
 	}
 	if(handled) pe.display();
 
-	return handled;
+	return (handled);
 }
 

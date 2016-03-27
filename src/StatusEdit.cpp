@@ -1,79 +1,84 @@
 /*
- * StatusEdit.cpp
+ * SubEdit.cpp
  *
- *  Created on: 18.2.2016
- *      Author: Jaakko
+ *  Created on: 2.2.2016
+ *      Author: krl
  */
 
 #include "StatusEdit.h"
+
 #include <cstdio>
-#include <string>
+#include <iostream>
 #include <sstream>
 
-stringstream ss;
-
-StatusEdit::StatusEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
-	value = "RUNNING";
-	edit = "RUNNING";
-	focus = false;
-}
+using namespace std;
 
 StatusEdit::~StatusEdit() {
-	// TODO Auto-generated destructor stub
 }
 
 void StatusEdit::increment() {
-
+	if (kohdalla && !focus) {
+		if (nro < alamenut.size()-1) {
+			nro++;
+		}
+	}
 }
-void StatusEdit::decrement() {
 
+void StatusEdit::decrement() {
+	if (kohdalla && !focus) {
+		if (nro > 0) {
+			nro--;
+		}
+	}
 }
 
 void StatusEdit::accept() {
-	save();
 }
 
 void StatusEdit::cancel() {
-	edit = value;
 }
 
+
 void StatusEdit::setFocus(bool focus) {
-	//Statusta ei voida Focusaa.
+	this->focus = focus;
+}
+
+void StatusEdit::setKohdalla(bool kohdalla) {
+	this->kohdalla = kohdalla;
 }
 
 void StatusEdit::display() {
+
+	stringstream convert;
+	stringstream ss;
 	lcd.clear();
 	lcd.setCursor(0,0);
-	lcd.print(title);
-	lcd.setCursor(0,1);
-	char s[16];
-	char editti[16];
 
-	if(focus) {
-		ss << edit;
-		ss >> editti;
-
-		snprintf(s, 16, "%s", editti);
+	if (!kohdalla) {
+		lcd.print(title);
+	}else {
+		lcd.print(alamenut[nro]);
+		lcd.setCursor(0,1);
+		if (focus){
+			lcd.print(tietoja[nro]);
+		}else{
+			lcd.print(edit[nro]);
+		}
 	}
-	else {
-		ss << edit;
-		ss >> editti;
-
-		snprintf(s, 16, "%s", editti);
-	}
-	lcd.print(s);
 }
+
+
+
 
 void StatusEdit::save() {
 	value = edit;
 }
 
-string StatusEdit::getValue() {
-	return value;
-}
 
-void StatusEdit::setValue(string value) {
-	edit = value;
+string StatusEdit::getValue(int nro) {
+	return (value[nro]);
+}
+void StatusEdit::setValue(int nro, string value) {
+	edit[nro] = value;
 	save();
 }
-

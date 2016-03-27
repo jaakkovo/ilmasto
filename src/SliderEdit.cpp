@@ -87,7 +87,7 @@ void SliderEdit::save() {
 
 
 int SliderEdit::getValue() {
-	return value;
+	return (value);
 }
 void SliderEdit::setValue(int value) {
 	edit = value;

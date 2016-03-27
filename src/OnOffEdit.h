@@ -9,7 +9,6 @@
 #define ONOFFEDIT_H_
 
 #include "PropertyEdit.h"
-#include "BarGraph.h"
 #include "LiquidCrystal.h"
 #include <string>
 

@@ -1,28 +1,52 @@
 /*
- * SetupEdit.cpp
+ * SubEdit.cpp
  *
- *  Created on: 18.2.2016
- *      Author: Jaakko
+ *  Created on: 2.2.2016
+ *      Author: krl
  */
 
 #include "SetupEdit.h"
 #include <cstdio>
+#include <iostream>
 #include <string>
 #include <sstream>
 
-stringstream ss;
-
-SetupEdit::SetupEdit(LiquidCrystal& lcd_, std::string editTitle): lcd(lcd_), title(editTitle){
-	value = "Time Set";
-	edit = "Time Set";
-	focus = false;
-	currentmenu = "menu";
-}
+using namespace std;
 
 SetupEdit::~SetupEdit() {
-	// TODO Auto-generated destructor stub
 }
 
+void SetupEdit::increment() {
+	if (kohdalla && focus) {
+		if (edit[nro] >= ylarajat[nro]) {
+			edit[nro] = ylarajat[nro];
+		}
+		else {
+			edit[nro]++;
+		}
+	} else if (kohdalla) {
+		if (nro < alamenut.size()-1) {
+			nro++;
+		}
+	}
+
+}
+
+void SetupEdit::decrement() {
+	if (kohdalla && focus) {
+		if (edit[nro] <= alarajat[nro]) {
+			edit[nro] = alarajat[nro];
+		}
+		else {
+			edit[nro]--;
+		}
+	}
+	else if (kohdalla) {
+		if (nro > 0) {
+			nro--;
+		}
+	}
+}
 
 void SetupEdit::accept() {
 	save();
@@ -32,50 +56,51 @@ void SetupEdit::cancel() {
 	edit = value;
 }
 
-void SetupEdit::increment() {
-
-}
-
-void SetupEdit::decrement() {
-
-}
 
 void SetupEdit::setFocus(bool focus) {
 	this->focus = focus;
 }
 
-void SetupEdit::display() {
-	lcd.clear();
-	lcd.setCursor(0,0);
-	lcd.print(title);
-	lcd.setCursor(0,1);
-	char s[16];
-	char editti[16];
-
-	if (focus) {
-		currentmenu = "setup_menu";
-	}
-	else {
-		currentmenu = "menu";
-		ss << edit;
-		ss >> editti;
-
-		snprintf(s, 16, "%s", editti);
-		lcd.print(s);
-	}
+void SetupEdit::setKohdalla(bool kohdalla) {
+	this->kohdalla = kohdalla;
 }
 
+void SetupEdit::display() {
+
+	lcd.clear();
+	lcd.setCursor(0,0);
+
+	if (!kohdalla) {
+		lcd.print(title);
+	} else {
+		lcd.print(alamenut[nro]);
+
+		lcd.setCursor(0,1);
+		if (focus) {
+			lcd.print("[");
+			lcd.print(edit[nro]);
+			lcd.print("]");
+		}
+		else {
+			lcd.print(edit[nro]);
+		}
+	}
+
+}
+
+
+
+
 void SetupEdit::save() {
+	// set current value to be same as edit value
 	value = edit;
 }
 
-string SetupEdit::getValue() {
-	return currentmenu;
-}
 
-void SetupEdit::setValue(string value) {
-	edit = value;
+int SetupEdit::getValue(int nro) {
+	return (value[nro]);
+}
+void SetupEdit::setValue(int nro, int value) {
+	edit[nro] = value;
 	save();
 }
-
-

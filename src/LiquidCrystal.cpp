@@ -7,6 +7,7 @@
 #include <string.h>
 #include "lcd_port.h"
 #include <iostream>
+#include <sstream>
 
 // When the display powers up, it is configured as follows:
 //
@@ -263,14 +264,27 @@ inline void LiquidCrystal::command(uint8_t value) {
 
 inline size_t LiquidCrystal::write(uint8_t value) {
   send(value, HIGH);
-  return 1; // assume success
+  return (1); // assume success
 }
 
 void LiquidCrystal::print(string& s) {
-	for (string::size_type i = 0; i < s.size(); i++){ //ei set cursoria
+	for (string::size_type i = 0; i < s.size(); i++){
 		write(s[i]);
 	}
 }
+
+void LiquidCrystal::print(int& i) {
+	stringstream ss;
+	ss << i;
+
+	string d;
+	d = ss.str();
+
+	for (string::size_type a = 0; a < d.size(); a++){
+		write(d[a]);
+	}
+}
+
 void LiquidCrystal::print(char *s) {
 	for (char* i = s; *i; ++i) {
 		write(*i);

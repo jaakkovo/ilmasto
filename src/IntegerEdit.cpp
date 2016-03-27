@@ -14,6 +14,7 @@ IntegerEdit::IntegerEdit(LiquidCrystal& lcd_, std::string editTitle, int ilower,
 	focus = false;
 	lower = ilower;
 	upper = iupper;
+	currentmenu = "setup_menu";
 }
 
 IntegerEdit::~IntegerEdit() {
@@ -40,7 +41,11 @@ void IntegerEdit::accept() {
 }
 
 void IntegerEdit::cancel() {
-	edit = value;
+	if(focus){
+		edit = value;
+	}else{
+		currentmenu = "menu";
+	}
 }
 
 
@@ -72,9 +77,16 @@ void IntegerEdit::save() {
 
 
 int IntegerEdit::getValue() {
-	return value;
+	return (value);
 }
 void IntegerEdit::setValue(int value) {
 	edit = value;
 	save();
+}
+string IntegerEdit::returnmenu(){
+	return (currentmenu);
+}
+
+void IntegerEdit::setmenu(string menu){
+	currentmenu = menu;
 }
