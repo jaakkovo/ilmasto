@@ -40,7 +40,7 @@ public:
 
 	void display();
 	int getValue(int nro);
-	void setValue(int nro, int value);
+	void setValue(int nro, int value1);
 private:
 	void save();
 

@@ -100,7 +100,7 @@ void SetupEdit::save() {
 int SetupEdit::getValue(int nro) {
 	return (value[nro]);
 }
-void SetupEdit::setValue(int nro, int value) {
-	edit[nro] = value;
+void SetupEdit::setValue(int nro, int value1) {
+	edit[nro] = value1;
 	save();
 }
