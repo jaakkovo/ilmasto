@@ -42,11 +42,14 @@
 #include <sstream>
 
 static volatile int counter;
+static volatile int nro = 0;
 static volatile uint32_t systicks;
 
 // ADC:n määrittelyt
 static volatile bool adcdone = false;
 static volatile bool adcstart = false;
+
+static volatile bool flag = false;
 
 volatile uint32_t a0;
 volatile uint32_t d0;
@@ -63,6 +66,14 @@ extern "C" {
 
 void SysTick_Handler(void)
 {
+	if (nro >= 1000) {
+		flag = true;
+		nro = 0;
+	}
+	else {
+		nro++;
+	}
+
 	systicks++;
 	if(counter > 0) counter--;
 
@@ -146,7 +157,7 @@ void ADC0A_IRQHandler(void)
 {
 	uint32_t pending;
 
-	/* Get pending interrupts */
+	/* Get pendinfg interrupts */
 	pending = Chip_ADC_GetFlags(LPC_ADC0);
 
 	/* Sequence A completion interrupt */
@@ -170,7 +181,7 @@ double pressure(){
 	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
 	/* Output temperature. */
 	pressure = (pressureData[0] << 8) | pressureData[1];
-	return pressure/24000.0;
+	return (pressure/22800.0);
 }
 float temperature (uint32_t value){
 	value += 3800;
@@ -298,19 +309,19 @@ int main(void) {
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
 
 	// Setup-valikko
-	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (s)" };
+	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (s)", "Default settings" };
 	vector<string> setupvalikot (arr, arr + sizeof(arr) / sizeof(arr[0]) );
 
 	// Status-valikko
 	static const string arr2[] ={ "info_System", "info_Temperature", "info_Pressure" };
 	vector<string> statusvalikot (arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]) );
 
-	// Ylarajat
-	static const int arr3[] = { 50, 135, 135, 50, 50, 3600 };
+	// Ylarajat 
+	static const int arr3[] = { 50, 135, 135, 50, 50, 3600, 1 };
 	vector<int> ylarajat (arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]) );
 
 	// Alarajat
-	static const int arr4[] = { 0, -135, -135, 0, 0, 0 };
+	static const int arr4[] = { 0, -135, -135, 0, 0, 0, 0 };
 	vector<int> alarajat (arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]) );
 
 
@@ -327,14 +338,15 @@ int main(void) {
 	// Display first menu item
 	menu.event(SubMenuItem::show);
 
-
-	int lukema = 500000;
-	int mod = 0;
-
 	int freq = 0;
 	string s = "";
 	string d = "";
 	int hertz = 0;
+	int sekunnit = 0;
+	int minuutit = 0;
+
+	int lukema = 0;
+	int mod = 0;
 
 	try {
 		setFrequency(node, 400 * hertz);
@@ -344,13 +356,52 @@ int main(void) {
 		status.setValue(0, "Error");
 	}
 
+	// Alkuasetukset
+	// Moodi
+	mode.setValue("Idle");
+	
+	// Hertzit 0
+	setup.setValue(0, 0);
+	hertz = 0;
+
+	// Paineen alaraja
+	setup.setValue(1, -10);
+
+	// Paineen yläraja
+	setup.setValue(2, 10);
+
+	// Hertzien alaraja
+	setup.setValue(3, 0);
+
+	// Hertzien yläraja
+	setup.setValue(4, 50);
+
+	// Aikaväli oletuksena 60 sekuntia.
+	setup.setValue(5, 60);
+
+	// Default settings nuppi ensin nollassa. 
+	setup.setValue(6, 0);
+	
+
 	while(1){
 
-		if (lukema > 1){
+		if (flag == true) {
+			flag = false;
+			if (sekunnit >= 59) {
+				sekunnit = 0;
+				minuutit++;
+			}
+			else {
+				sekunnit++;
+			}
+			if (lukema > 0) {
+				lukema--;
+			}
 			mod++;
-			lukema--;
+				
 		}
-		if (lukema == 1){
+
+		if (lukema == 0){
 			try {
 				Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
@@ -413,7 +464,7 @@ int main(void) {
 				status.setValue(2, "Error");
 			}
 
-			if (mod > (100000 * setup.getValue(5))) {
+			if (mod > setup.getValue(5)) {
 				mod = 0;
 				if (mode.getValue() == "Automatic") {
 
@@ -449,63 +500,48 @@ int main(void) {
 					}
 				}
 			}
-			lukema = 500000;
+			lukema = 5;
 		}
-		/*  TAAJUUDEN VAIHTELU KOMMENTOITU
-			uint8_t result;
-
-			// slave: read (2) 16-bit registers starting at register 102 to RX buffer
-			j = 0;
-			do {
-				result = node.readHoldingRegisters(102, 2);
-				j++;
-			} while(j < 3 && result != node.ku8MBSuccess);
-
-			if (result == node.ku8MBSuccess) {
-				printf("F=%4d, I=%4d  (ctr=%d)\n", node.getResponseBuffer(0), node.getResponseBuffer(1),j);
-			}
-			else {
-				printf("ctr=%d\n",j);
-			}
 
 
-			Sleep(3000);
-			i++;
-			if(i >= 20) {
-				i=0;
-			}
 
-			// frequency is scaled:
-			// 20000 = 50 Hz, 0 = 0 Hz, linear scale 400 units/Hz
-			setFrequency(node, fa[i]);
-		 */
-
-		// VALIKKO
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 			}
-			lukema = 500000;
+			lukema = 5;
 			menu.event(SubMenuItem::up);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			}
-			lukema = 500000;
+			lukema = 5;
 			menu.event(SubMenuItem::down);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 			}
-			lukema = 500000;
+			lukema = 5;
 			menu.event(SubMenuItem::ok);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 			}
-			lukema = 500000;
+			lukema = 5;
 			menu.event(SubMenuItem::back);
 		}
 
+		// Default settings
+		if (setup.getValue(6) == 1) {
+			mode.setValue("Idle");
+			setup.setValue(0, 0);
+			setup.setValue(1, -10);
+			setup.setValue(2, 10);
+			setup.setValue(3, 0);
+			setup.setValue(4, 50);
+			setup.setValue(5, 60);
+			setup.setValue(6, 0);
+			hertz = 0;
+		}
 
 
 		if (mode.getValue() == "Manual" ) {
@@ -533,24 +569,6 @@ int main(void) {
 				}
 			}
 		}
-
-
-		// Näin muutetaan statuksen arvoja:
-		// Ensimmäinen parametri määrittää monesko valikon kohta on kyseessä. Alkaen nollasta.
-		// 0 = info_System, 1 = info_ModBus, 2 = info_Pressure_sensor
-		//	if (jotain){
-		//		status.setValue[0, "Running OK"]
-		//	}
-
-		//	if (jotain){
-		//	status.setValue[1, "Connected"]
-		//	}
-
-		// Näin tarkastetaan asetettuja arvoja:
-		// Tällä voisi tarkistaa, onko ala-arvo muuttunut nykyisestä.
-		//	if(setup.getValue(0) != asetettu_ala_arvo){
-		// Mitä tapahtuu jos arvo on muuttunut
-		//	}
 	}
 	return (0);
 }
