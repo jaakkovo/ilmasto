@@ -521,7 +521,7 @@ int main(void) {
 		}
 
 		if (mode.getValue() == "Manual") {
-			if (setup.getValue(0) != hertz) {
+			if (hertz != setup.getValue(0)) {
 				hertz = setup.getValue(0);
 				setFrequency(node, (400 * hertz));
 				status.setValue(0, "OK");
