@@ -310,7 +310,7 @@ int main(void) {
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
 
 	// Setup-valikko
-	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (s)", "Default settings" };
+	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (m)", "Default settings" };
 	vector<string> setupvalikot(arr, arr + sizeof(arr) / sizeof(arr[0]));
 
 	// Status-valikko
@@ -318,7 +318,7 @@ int main(void) {
 	vector<string> statusvalikot(arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]));
 
 	// Ylarajat 
-	static const int arr3[] = { 50, 135, 135, 50, 50, 3600, 1 };
+	static const int arr3[] = { 50, 135, 135, 50, 50, 360, 1 };
 	vector<int> ylarajat(arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]));
 
 	// Alarajat
@@ -458,22 +458,19 @@ int main(void) {
 			status.setValue(2, "OK");
 
 
-
-			if (mod >= setup.getValue(5)) {
+			if (mod >= (60*setup.getValue(5))) {
 				if (mode.getValue() == "Automatic") {
 
 					// Tarkistukset. Mikäli hertzit on annettujen rajojen ulkopuolella, asetetaan se raja-arvoon.
 					if (hertz < setup.getValue(3)) {
 						hertz = setup.getValue(3);
+						setup.setValue(0, hertz);
 					}
 
 					if (hertz > setup.getValue(4)) {
 						hertz = setup.getValue(4);
+						setup.setValue(0, hertz);
 					}
-
-
-					setFrequency(node, 400 * hertz);
-					status.setValue(0, "OK");
 
 					if (pressure() > setup.getValue(2)) {
 						if (hertz > setup.getValue(3)) {
@@ -482,12 +479,13 @@ int main(void) {
 					}
 
 					if (pressure() < setup.getValue(1)) {
-
 						if (hertz < setup.getValue(4)) {
 							hertz++;
 						}
-
 					}
+
+					setFrequency(node, 400 * hertz);
+					status.setValue(0, "OK");
 				}
 				mod = 0;
 			}
