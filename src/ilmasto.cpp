@@ -322,7 +322,7 @@ int main(void) {
 	vector<int> ylarajat(arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]));
 
 	// Alarajat
-	static const int arr4[] = { 0, -135, -135, 0, 0, 0, 0 };
+	static const int arr4[] = { 0, -135, -135, 0, 0, 1, 0 };
 	vector<int> alarajat(arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]));
 
 
@@ -364,10 +364,10 @@ int main(void) {
 	hertz = 0;
 
 	// Paineen alaraja
-	setup.setValue(1, -10);
+	setup.setValue(1, -30);
 
 	// Paineen yläraja
-	setup.setValue(2, 10);
+	setup.setValue(2, 30);
 
 	// Hertzien alaraja
 	setup.setValue(3, 0);
@@ -375,8 +375,8 @@ int main(void) {
 	// Hertzien yläraja
 	setup.setValue(4, 50);
 
-	// Aikaväli oletuksena 60 sekuntia.
-	setup.setValue(5, 60);
+	// Aikaväli oletuksena 1 minuutti.
+	setup.setValue(5, 1);
 
 	// Default settings nuppi ensin nollassa. 
 	setup.setValue(6, 0);
@@ -522,11 +522,11 @@ int main(void) {
 		if (setup.getValue(6) == 1) {
 			mode.setValue("Idle");
 			setup.setValue(0, 0);
-			setup.setValue(1, -10);
-			setup.setValue(2, 10);
+			setup.setValue(1, -30);
+			setup.setValue(2, 30);
 			setup.setValue(3, 0);
 			setup.setValue(4, 50);
-			setup.setValue(5, 60);
+			setup.setValue(5, 1);
 			setup.setValue(6, 0);
 			hertz = 0;
 		}
