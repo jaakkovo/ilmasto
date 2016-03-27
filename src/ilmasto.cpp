@@ -345,7 +345,7 @@ int main(void) {
 	int sekunnit = 0;
 	int minuutit = 0;
 
-	int lukema = 0;
+	int lukema = 5;
 	int mod = 0;
 
 	try {
