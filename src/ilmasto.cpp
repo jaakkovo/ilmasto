@@ -484,24 +484,28 @@ int main(void) {
 
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
+				Sleep(10);
 			}
 			lukema = 5;
 			menu.event(SubMenuItem::up);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
+				Sleep(10);
 			}
 			lukema = 5;
 			menu.event(SubMenuItem::down);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
+				Sleep(10);
 			}
 			lukema = 5;
 			menu.event(SubMenuItem::ok);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
+				Sleep(10);
 			}
 			lukema = 5;
 			menu.event(SubMenuItem::back);
