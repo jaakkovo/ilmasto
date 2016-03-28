@@ -22,16 +22,13 @@
 #include <cstring>
 #include <iostream>
 #include "lcd_port.h"
-#include "BarGraph.h"
 #include "LiquidCrystal.h"
 #include "SimpleMenu.h"
 #include "SubMenuItem.h"
 #include "IntegerEdit.h"
-#include "SliderEdit.h"
 #include "StatusEdit.h"
 #include "SetupEdit.h"
 #include "ManuAutoEdit.h"
-#include "OnOffEdit.h"
 #include "TimeEdit.h"
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
@@ -62,6 +59,8 @@ volatile int kalib = 50; // Määrittää kalibrointirajan +-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 
 
 	void SysTick_Handler(void)
@@ -182,13 +181,14 @@ double pressure() {
 	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
 	/* Output temperature. */
 	pressure = (pressureData[0] << 8) | pressureData[1];
-	return (pressure / 22800.0);
+
+	return ((double)pressure / 22800.0);
 }
 float temperature(uint32_t value) {
 	value += 3800;
 	float temp = ((float)value / 16382.0);
 	temp = temp * 165.0;
-	return temp - 40.0;
+	return (temp - 40.0);
 }
 
 
@@ -337,6 +337,19 @@ int main(void) {
 
 	string s = "";
 	string d = "";
+	string p = "";
+	string mins = "";
+	string maxs = "";
+
+	stringstream dd;
+	stringstream ss;
+	stringstream oo;
+
+	stringstream min;
+	stringstream max;
+
+
+
 	int hertz = 0;
 	int sekunnit = 0;
 	int minuutit = 0;
@@ -344,7 +357,6 @@ int main(void) {
 	int lukema = 5;
 	int mod = 0;
 
-	setFrequency(node, (400 * hertz));
 	status.setValue(0, "OK");
 
 	// Alkuasetukset
@@ -414,7 +426,8 @@ int main(void) {
 			lukema = 0;
 			lcd.clear();
 
-			stringstream ss;
+			ss.str("");
+			s = "";
 
 			ss.precision(3);
 			ss << temperature(d0);
@@ -439,7 +452,9 @@ int main(void) {
 				lcd.print("Mode:I");
 			}
 
-			stringstream dd;
+
+			dd.str("");
+			d = "";
 
 			dd.precision(3);
 			dd << pressure();
@@ -469,17 +484,78 @@ int main(void) {
 					if (pressure() > setup.getValue(2)) {
 						if (hertz > setup.getValue(3)) {
 							hertz--;
+							lcd.clear();
+							lcd.setCursor(0, 0);
+							lcd.print("Auto changing hz");
+							lcd.setCursor(0, 1);
+							lcd.print("Wait...");
+							Sleep(500);
+							setFrequency(node, (400 * hertz));
+							lcd.clear();
+							lcd.setCursor(0, 0);
+							lcd.print("Done!");
+							Sleep(1000);
+							lcd.clear();
+							menu.event(SubMenuItem::show);
+							status.setValue(0, "OK");
 						}
-					}
-
-					if (pressure() < setup.getValue(1)) {
+					}else if (pressure() < setup.getValue(1)) {
 						if (hertz < setup.getValue(4)) {
 							hertz++;
+							lcd.clear();
+							lcd.setCursor(0, 0);
+							lcd.print("Auto changing hz");
+							lcd.setCursor(0, 1);
+							lcd.print("Wait...");
+							Sleep(500);
+							setFrequency(node, (400 * hertz));
+							lcd.clear();
+							lcd.setCursor(0, 0);
+							lcd.print("Done!");
+							Sleep(1000);
+							lcd.clear();
+							menu.event(SubMenuItem::show);
+							status.setValue(0, "OK");
 						}
+					}else{
+						lcd.clear();
+						lcd.setCursor(0, 0);
+						lcd.print("Pressure OK:");
+
+						oo.str("");
+						p = "";
+
+						oo.precision(3);
+						oo << pressure();
+						oo >> p;
+						lcd.print(p);
+						lcd.setCursor(0, 1);
+						lcd.print("Min:");
+
+						min.str("");
+						mins = "";
+
+						min << setup.getValue(1);
+						min >> mins;
+
+						lcd.print(mins);
+
+						lcd.print(" Max:");
+
+						max.str("");
+						maxs = "";
+
+						max << setup.getValue(2);
+						max >> maxs;
+
+						lcd.print(maxs);
+
+						Sleep(4000);
+						lcd.clear();
+						menu.event(SubMenuItem::show);
+						status.setValue(0, "OK");
 					}
 
-					setFrequency(node, (400 * hertz));
-					status.setValue(0, "OK");
 				}
 				mod = 0;
 			}
@@ -536,7 +612,21 @@ int main(void) {
 		if (mode.getValue() == "Manual") {
 			if (hertz != setup.getValue(0)) {
 				hertz = setup.getValue(0);
+
+				lcd.clear();
+				lcd.setCursor(0, 0);
+				lcd.print("Changing freq.");
+				lcd.setCursor(0, 1);
+				lcd.print("Wait...");
+				Sleep(500);
 				setFrequency(node, (400 * hertz));
+				lcd.clear();
+				lcd.setCursor(0, 0);
+				lcd.print("Done!");
+				Sleep(1000);
+				lcd.clear();
+				menu.event(SubMenuItem::show);
+
 				status.setValue(0, "OK");
 			}
 		}else if (mode.getValue() == "Idle") {
