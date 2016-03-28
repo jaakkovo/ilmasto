@@ -388,8 +388,13 @@ int main(void) {
 			if (lukema > 0) {
 				lukema--;
 			}
-			mod++;
 
+			if (mode.getValue() == "Automatic") {
+				mod++;
+			}
+			else {
+				mod = 0;
+			}
 		}
 
 		if (lukema == 0) {
