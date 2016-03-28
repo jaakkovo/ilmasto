@@ -181,14 +181,14 @@ double pressure() {
 	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
 	/* Output temperature. */
 	pressure = (pressureData[0] << 8) | pressureData[1];
-
-	return ((double)pressure / 22800.0);
+	return pressure/22800.0;
 }
+
 float temperature(uint32_t value) {
 	value += 3800;
 	float temp = ((float)value / 16382.0);
 	temp = temp * 165.0;
-	return (temp - 40.0);
+	return temp-40.0;
 }
 
 
@@ -345,6 +345,10 @@ int main(void) {
 	stringstream ss;
 	stringstream oo;
 
+	dd.precision(3);
+	ss.precision(3);
+	oo.precision(3);
+
 	stringstream min;
 	stringstream max;
 
@@ -426,12 +430,13 @@ int main(void) {
 			lukema = 0;
 			lcd.clear();
 
-			ss.str("");
+			ss.clear();
+			ss.str(std::string());
+
 			s = "";
 
-			ss.precision(3);
 			ss << temperature(d0);
-			ss >> s;
+			s = ss.str();
 
 			lcd.setCursor(0, 0);
 			lcd.print("Temp:");
@@ -453,14 +458,15 @@ int main(void) {
 			}
 
 
-			dd.str("");
+			dd.clear();//clear any bits set
+			dd.str(std::string());
 			d = "";
+
 			lcd.setCursor(0, 1);
 			lcd.print("Pressure:");
 
-			dd.precision(3);
 			dd << pressure();
-			dd >> d;
+			d = dd.str();
 
 			lcd.print(d);
 
@@ -522,12 +528,12 @@ int main(void) {
 						lcd.setCursor(0, 0);
 						lcd.print("Pressure OK:");
 						Sleep(50);
-						oo.str("");
+						oo.clear();//clear any bits set
+						oo.str(std::string());
 						p = "";
 
-						oo.precision(3);
 						oo << pressure();
-						oo >> p;
+						p = oo.str();
 						lcd.print(p);
 						lcd.setCursor(0, 1);
 						lcd.print("Min:");
