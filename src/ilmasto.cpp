@@ -22,13 +22,16 @@
 #include <cstring>
 #include <iostream>
 #include "lcd_port.h"
+#include "BarGraph.h"
 #include "LiquidCrystal.h"
 #include "SimpleMenu.h"
 #include "SubMenuItem.h"
 #include "IntegerEdit.h"
+#include "SliderEdit.h"
 #include "StatusEdit.h"
 #include "SetupEdit.h"
 #include "ManuAutoEdit.h"
+#include "OnOffEdit.h"
 #include "TimeEdit.h"
 #include "DecimalEdit.h"
 #include "PropertyEdit.h"
@@ -59,8 +62,6 @@ volatile int kalib = 50; // Määrittää kalibrointirajan +-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
 
 
 	void SysTick_Handler(void)
@@ -181,14 +182,13 @@ double pressure() {
 	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
 	/* Output temperature. */
 	pressure = (pressureData[0] << 8) | pressureData[1];
-	return pressure/22800.0;
+	return (pressure / 22800.0);
 }
-
 float temperature(uint32_t value) {
 	value += 3800;
 	float temp = ((float)value / 16382.0);
 	temp = temp * 165.0;
-	return temp-40.0;
+	return temp - 40.0;
 }
 
 
@@ -270,6 +270,10 @@ int main(void) {
 	Chip_ADC_EnableSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
 	// ADC:n ALUSTUS LOPPUU
+
+
+
+
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
 	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
@@ -306,7 +310,7 @@ int main(void) {
 	// Alamenun otsikkonimikkeet. Rajat annetaan samassa järjestyksessä.
 
 	// Setup-valikko
-	static const string arr[] = { "Hertz", "Pressure Min(Pa)", "Pressure Max(Pa)", "Hertz Min", "Hertz Max", "Interval (min)", "Default settings" };
+	static const string arr[] = { "Hertz", "Pressure Min", "Pressure Max", "Hertz Min", "Hertz Max", "Interval (m)", "Default settings" };
 	vector<string> setupvalikot(arr, arr + sizeof(arr) / sizeof(arr[0]));
 
 	// Status-valikko
@@ -318,14 +322,14 @@ int main(void) {
 	vector<int> ylarajat(arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]));
 
 	// Alarajat
-	static const int arr4[] = { 0, -135, -135, 0, 0, 1, 0 };
+	static const int arr4[] = { 0, -135, -135, 0, 0, 0, 0 };
 	vector<int> alarajat(arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]));
 
 
 	// Luodaan menun kohdat. Menuille annetaan otsikko, alamenujen otsikot, alarajat ja ylarajat.
-	ManuAutoEdit mode = ManuAutoEdit(lcd, "Mode:");
-	SetupEdit setup = SetupEdit(lcd, "Setup >", setupvalikot, alarajat, ylarajat);
-	StatusEdit status = StatusEdit(lcd, "Status >", statusvalikot, alarajat, ylarajat);
+	ManuAutoEdit mode = ManuAutoEdit(lcd, "Mode");
+	SetupEdit setup = SetupEdit(lcd, "Setup", setupvalikot, alarajat, ylarajat);
+	StatusEdit status = StatusEdit(lcd, "Status", statusvalikot, alarajat, ylarajat);
 
 	// Päävalikkoon lisätään kohtia. True / False viimeisenä parametrina kertoo, onko valikolla alavalikko.
 	menu.addItem(new SubMenuItem(mode, false));
@@ -335,25 +339,9 @@ int main(void) {
 	// Display first menu item
 	menu.event(SubMenuItem::show);
 
+	int freq = 0;
 	string s = "";
 	string d = "";
-	string p = "";
-	string mins = "";
-	string maxs = "";
-
-	stringstream dd;
-	stringstream ss;
-	stringstream oo;
-
-	dd.precision(3);
-	ss.precision(3);
-	oo.precision(3);
-
-	stringstream min;
-	stringstream max;
-
-
-
 	int hertz = 0;
 	int sekunnit = 0;
 	int minuutit = 0;
@@ -367,27 +355,14 @@ int main(void) {
 	// Moodi
 	mode.setValue("Idle");
 
-	// Hertzit 0
 	setup.setValue(0, 0);
-	hertz = 0;
-
-	// Paineen alaraja
 	setup.setValue(1, -30);
-
-	// Paineen yläraja
 	setup.setValue(2, 30);
-
-	// Hertzien alaraja
 	setup.setValue(3, 0);
-
-	// Hertzien yläraja
 	setup.setValue(4, 50);
-
-	// Aikaväli oletuksena 1 minuutti.
 	setup.setValue(5, 1);
-
-	// Default settings nuppi ensin nollassa. 
 	setup.setValue(6, 0);
+	hertz = 0;
 
 
 	while (1) {
@@ -404,13 +379,8 @@ int main(void) {
 			if (lukema > 0) {
 				lukema--;
 			}
+			mod++;
 
-			if (mode.getValue() == "Automatic") {
-				mod++;
-			}
-			else {
-				mod = 0;
-			}
 		}
 
 		if (lukema == 0) {
@@ -427,22 +397,22 @@ int main(void) {
 			a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
 			d3 = ADC_DR_RESULT(a3);
 
+
 			lukema = 0;
 			lcd.clear();
 
-			ss.clear();
-			ss.str(std::string());
+			stringstream ss;
 
-			s = "";
-
+			ss.precision(3);
 			ss << temperature(d0);
-			s = ss.str();
+			ss >> s;
 
 			lcd.setCursor(0, 0);
 			lcd.print("Temp:");
 			lcd.print(s);
 
 			status.setValue(1, "OK");
+
 
 			if (mode.getValue() == "Manual") {
 				lcd.print(" ");
@@ -458,19 +428,18 @@ int main(void) {
 			}
 
 
-			dd.clear();//clear any bits set
-			dd.str(std::string());
-			d = "";
+			stringstream dd;
 
-			lcd.setCursor(0, 1);
-			lcd.print("Pressure:");
-
+			dd.precision(3);
 			dd << pressure();
-			d = dd.str();
+			dd >> d;
+			lcd.setCursor(0, 1);
 
+			lcd.print("Pressure:");
 			lcd.print(d);
 
 			status.setValue(2, "OK");
+
 
 
 			if (mod >= (60*setup.getValue(5))) {
@@ -490,78 +459,15 @@ int main(void) {
 					if (pressure() > setup.getValue(2)) {
 						if (hertz > setup.getValue(3)) {
 							hertz--;
-							lcd.clear();
-							lcd.setCursor(0, 0);
-							lcd.print("Auto changing hz");
-							lcd.setCursor(0, 1);
-							lcd.print("Wait...");
-							Sleep(500);
-							setFrequency(node, (400 * hertz));
-							lcd.clear();
-							lcd.setCursor(0, 0);
-							lcd.print("Done!");
-							Sleep(1000);
-							lcd.clear();
-							menu.event(SubMenuItem::show);
-							status.setValue(0, "OK");
 						}
-					}else if (pressure() < setup.getValue(1)) {
+					}
+					if (pressure() < setup.getValue(1)) {
 						if (hertz < setup.getValue(4)) {
 							hertz++;
-							lcd.clear();
-							lcd.setCursor(0, 0);
-							lcd.print("Auto changing hz");
-							lcd.setCursor(0, 1);
-							lcd.print("Wait...");
-							Sleep(500);
-							setFrequency(node, (400 * hertz));
-							lcd.clear();
-							lcd.setCursor(0, 0);
-							lcd.print("Done!");
-							Sleep(1000);
-							lcd.clear();
-							menu.event(SubMenuItem::show);
-							status.setValue(0, "OK");
 						}
-					}else{
-						lcd.clear();
-						lcd.setCursor(0, 0);
-						lcd.print("Pressure OK:");
-						Sleep(50);
-						oo.clear();//clear any bits set
-						oo.str(std::string());
-						p = "";
-
-						oo << pressure();
-						p = oo.str();
-						lcd.print(p);
-						lcd.setCursor(0, 1);
-						lcd.print("Min:");
-
-						min.str("");
-						mins = "";
-
-						min << setup.getValue(1);
-						min >> mins;
-
-						lcd.print(mins);
-
-						lcd.print(" Max:");
-
-						max.str("");
-						maxs = "";
-
-						max << setup.getValue(2);
-						max >> maxs;
-
-						lcd.print(maxs);
-
-						Sleep(4000);
-						lcd.clear();
-						menu.event(SubMenuItem::show);
-						status.setValue(0, "OK");
 					}
-
+					setFrequency(node, 400 * hertz);
+					status.setValue(0, "OK");
 				}
 				mod = 0;
 			}
