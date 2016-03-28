@@ -19,12 +19,12 @@ class StatusEdit : public PropertyEdit {
 public:
 	// Luokan konstruktori saa otsikon, alamenun otsikot, alarajat ja ylarajat. Luokan raja-muuttujat alustetaan paaohjelmassa annetuilla arvoilla.
 	StatusEdit(LiquidCrystal& lcd_, std::string editTitle, vector <string> tekstit, vector <int> ialarajat, vector <int> iylarajat) :  lcd(lcd_), title(editTitle), alamenut { tekstit }, alarajat{ ialarajat }, ylarajat{ iylarajat } {
-		edit.push_back("Monday");
-		edit.push_back("Tuesday");
-		edit.push_back("Wednesday");
-		tietoja.push_back("!Tahan info!");
-		tietoja.push_back("!Tahan info!");
-		tietoja.push_back("!Tahan info!");
+		edit.push_back("");
+		edit.push_back("");
+		edit.push_back("");
+		tietoja.push_back("No more info");
+		tietoja.push_back("No more info");
+		tietoja.push_back("No more info");
 		nro = alamenut.size()-1;
 		focus = false;
 		kohdalla = false;

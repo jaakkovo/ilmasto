@@ -455,13 +455,13 @@ int main(void) {
 
 			dd.str("");
 			d = "";
+			lcd.setCursor(0, 1);
+			lcd.print("Pressure:");
 
 			dd.precision(3);
 			dd << pressure();
 			dd >> d;
-			lcd.setCursor(0, 1);
 
-			lcd.print("Pressure:");
 			lcd.print(d);
 
 			status.setValue(2, "OK");
@@ -521,7 +521,7 @@ int main(void) {
 						lcd.clear();
 						lcd.setCursor(0, 0);
 						lcd.print("Pressure OK:");
-
+						Sleep(50);
 						oo.str("");
 						p = "";
 
