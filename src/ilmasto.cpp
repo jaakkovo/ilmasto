@@ -322,7 +322,7 @@ int main(void) {
 	vector<int> ylarajat(arr3, arr3 + sizeof(arr3) / sizeof(arr3[0]));
 
 	// Alarajat
-	static const int arr4[] = { 0, -135, -135, 0, 0, 0, 0 };
+	static const int arr4[] = { 0, -135, -135, 0, 0, 1, 0 };
 	vector<int> alarajat(arr4, arr4 + sizeof(arr4) / sizeof(arr4[0]));
 
 
