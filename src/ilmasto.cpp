@@ -492,6 +492,7 @@ int main(void) {
 				Sleep(10);
 			}
 			lukema = 5;
+			mod = 0;
 			menu.event(SubMenuItem::up);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 16)) {
@@ -499,6 +500,7 @@ int main(void) {
 				Sleep(10);
 			}
 			lukema = 5;
+			mod = 0;
 			menu.event(SubMenuItem::down);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 1, 3)) {
@@ -506,6 +508,7 @@ int main(void) {
 				Sleep(10);
 			}
 			lukema = 5;
+			mod = 0;
 			menu.event(SubMenuItem::ok);
 		}
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 0)) {
@@ -513,6 +516,7 @@ int main(void) {
 				Sleep(10);
 			}
 			lukema = 5;
+			mod = 0;
 			menu.event(SubMenuItem::back);
 		}
 
