@@ -379,8 +379,11 @@ int main(void) {
 			if (lukema > 0) {
 				lukema--;
 			}
-			mod++;
-
+			if (mode.getValue() == "Automatic"){
+				mod++;
+			}else{
+				mod = 0;
+			}
 		}
 
 		if (lukema == 0) {
@@ -440,8 +443,6 @@ int main(void) {
 
 			status.setValue(2, "OK");
 
-
-
 			if (mod >= (60*setup.getValue(5))) {
 				if (mode.getValue() == "Automatic") {
 
@@ -466,7 +467,18 @@ int main(void) {
 							hertz++;
 						}
 					}
-					setFrequency(node, 400 * hertz);
+					lcd.clear();
+					lcd.setCursor(0, 0);
+					lcd.print("Changing freq.");
+					lcd.setCursor(0, 1);
+					lcd.print("Wait...");
+					Sleep(500);
+					setFrequency(node, (400 * hertz));
+					lcd.clear();
+					lcd.setCursor(0, 0);
+					lcd.print("Done!");
+					Sleep(1000);
+					lcd.clear();
 					status.setValue(0, "OK");
 				}
 				mod = 0;
