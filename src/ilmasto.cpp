@@ -182,7 +182,7 @@ double pressure() {
 	i2c.transaction(0x40, &readPressureCmd, 1, pressureData, 3);
 	/* Output temperature. */
 	pressure = (pressureData[0] << 8) | pressureData[1];
-	return (pressure / 22800.0);
+	return (pressure / 228.0);
 }
 float temperature(uint32_t value) {
 	value += 3800;
@@ -340,7 +340,7 @@ int main(void) {
 	menu.event(SubMenuItem::show);
 
 	int freq = 0;
-	string s = "";
+
 	string d = "";
 	int hertz = 0;
 	int sekunnit = 0;
@@ -349,11 +349,13 @@ int main(void) {
 	int lukema = 5;
 	int mod = 0;
 
-	status.setValue(0, "OK");
+	//status.setValue(0, "OK");
 
 	// Alkuasetukset
 	// Moodi
 	mode.setValue("Idle");
+
+	char s[17];
 
 	setup.setValue(0, 0);
 	setup.setValue(1, -30);
@@ -387,6 +389,9 @@ int main(void) {
 		}
 
 		if (lukema == 0) {
+			if (mode.getValue() != "Idle"){
+				setFrequency(node, (400 * hertz));
+			}
 
 			Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
 
@@ -414,7 +419,7 @@ int main(void) {
 			lcd.print("Temp:");
 			lcd.print(s);
 
-			status.setValue(1, "OK");
+			//status.setValue(1, "OK");
 
 
 			if (mode.getValue() == "Manual") {
@@ -431,22 +436,18 @@ int main(void) {
 			}
 
 
-			stringstream dd;
 
-			dd.precision(3);
-			dd << pressure();
-			dd >> d;
+
+			snprintf(s, 16, "%.1f", pressure());
 			lcd.setCursor(0, 1);
 
 			lcd.print("Pressure:");
-			lcd.print(d);
+			lcd.print(s);
 
-			status.setValue(2, "OK");
+			//status.setValue(2, "OK");
 
-			if (mod >= (60*setup.getValue(5))) {
+			if (mod >= 5*setup.getValue(5)) {
 				if (mode.getValue() == "Automatic") {
-
-					// Tarkistukset. Mikäli hertzit on annettujen rajojen ulkopuolella, asetetaan se raja-arvoon.
 					if (hertz < setup.getValue(3)) {
 						hertz = setup.getValue(3);
 						setup.setValue(0, hertz);
@@ -458,28 +459,17 @@ int main(void) {
 					}
 
 					if (pressure() > setup.getValue(2)) {
-						if (hertz > setup.getValue(3)) {
+						//if (hertz > setup.getValue(3)) {
 							hertz--;
-						}
+						//}
 					}
 					if (pressure() < setup.getValue(1)) {
-						if (hertz < setup.getValue(4)) {
+						//if (hertz < setup.getValue(4)) {
 							hertz++;
-						}
+						//}
 					}
-					lcd.clear();
-					lcd.setCursor(0, 0);
-					lcd.print("Changing freq.");
-					lcd.setCursor(0, 1);
-					lcd.print("Wait...");
-					Sleep(500);
 					setFrequency(node, (400 * hertz));
-					lcd.clear();
-					lcd.setCursor(0, 0);
-					lcd.print("Done!");
-					Sleep(1000);
-					lcd.clear();
-					status.setValue(0, "OK");
+
 				}
 				mod = 0;
 			}
@@ -537,27 +527,13 @@ int main(void) {
 			if (hertz != setup.getValue(0)) {
 				hertz = setup.getValue(0);
 
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.print("Changing freq.");
-				lcd.setCursor(0, 1);
-				lcd.print("Wait...");
-				Sleep(500);
-				setFrequency(node, (400 * hertz));
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.print("Done!");
-				Sleep(1000);
-				lcd.clear();
-				menu.event(SubMenuItem::show);
-
-				status.setValue(0, "OK");
+				//status.setValue(0, "OK");
 			}
 		}else if (mode.getValue() == "Idle") {
 			if (hertz != 0) {
 				hertz = 0;
 				setFrequency(node, (400 * hertz));
-				status.setValue(0, "OK");
+				//status.setValue(0, "OK");
 			}
 		}
 
