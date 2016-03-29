@@ -11,8 +11,6 @@
 #include <string>
 #include <sstream>
 
-using namespace std;
-
 SetupEdit::~SetupEdit() {
 }
 
@@ -53,7 +51,7 @@ void SetupEdit::accept() {
 }
 
 void SetupEdit::cancel() {
-	edit = value;
+	edit[nro] = value[nro];
 }
 
 
@@ -88,19 +86,16 @@ void SetupEdit::display() {
 
 }
 
-
-
-
 void SetupEdit::save() {
 	// set current value to be same as edit value
 	value = edit;
 }
 
-
-int SetupEdit::getValue(int nro) {
-	return (value[nro]);
+int SetupEdit::getValue(int nrob) {
+	//printf("%d \n",value[nrob]);
+	return (value[nrob]);
 }
-void SetupEdit::setValue(int nro, int value) {
-	edit[nro] = value;
+void SetupEdit::setValue(int nrob, int value1) {
+	edit[nrob] = value1;
 	save();
 }

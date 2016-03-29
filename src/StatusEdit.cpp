@@ -71,7 +71,7 @@ void StatusEdit::display() {
 
 
 void StatusEdit::save() {
-	value = edit;
+	value[nro] = edit[nro];
 }
 
 
