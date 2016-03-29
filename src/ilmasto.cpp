@@ -389,8 +389,46 @@ int main(void) {
 		}
 
 		if (lukema == 0) {
+
+			if (mod >= 5*setup.getValue(5)) {
+				if (mode.getValue() == "Automatic") {
+					if (hertz < setup.getValue(3)) {
+						hertz = setup.getValue(3);
+						setup.setValue(0, hertz);
+					}
+
+					if (hertz > setup.getValue(4)) {
+						hertz = setup.getValue(4);
+						setup.setValue(0, hertz);
+					}
+
+					if (pressure() > setup.getValue(2)) {
+						//if (hertz > setup.getValue(3)) {
+							hertz--;
+						//}
+					}
+					if (pressure() < setup.getValue(1)) {
+						//if (hertz < setup.getValue(4)) {
+							hertz++;
+						//}
+					}
+
+				}
+				mod = 0;
+			}
+
 			if (mode.getValue() != "Idle"){
-				setFrequency(node, (400 * hertz));
+							lcd.clear();
+							lcd.setCursor(0, 0);
+							lcd.print("Heartbeat.");
+							lcd.setCursor(0, 1);
+							lcd.print("Wait...");
+							Sleep(100);
+							setFrequency(node, (400 * hertz));
+							lcd.clear();
+							lcd.setCursor(0, 0);
+							lcd.print("Done!");
+							Sleep(1000);
 			}
 
 			Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
@@ -446,33 +484,8 @@ int main(void) {
 
 			//status.setValue(2, "OK");
 
-			if (mod >= 5*setup.getValue(5)) {
-				if (mode.getValue() == "Automatic") {
-					if (hertz < setup.getValue(3)) {
-						hertz = setup.getValue(3);
-						setup.setValue(0, hertz);
-					}
 
-					if (hertz > setup.getValue(4)) {
-						hertz = setup.getValue(4);
-						setup.setValue(0, hertz);
-					}
 
-					if (pressure() > setup.getValue(2)) {
-						//if (hertz > setup.getValue(3)) {
-							hertz--;
-						//}
-					}
-					if (pressure() < setup.getValue(1)) {
-						//if (hertz < setup.getValue(4)) {
-							hertz++;
-						//}
-					}
-					setFrequency(node, (400 * hertz));
-
-				}
-				mod = 0;
-			}
 			lukema = 5;
 		}
 
