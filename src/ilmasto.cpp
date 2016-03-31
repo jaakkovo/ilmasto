@@ -1,11 +1,11 @@
 
 /*
 ===============================================================================
- Name        : main.c
- Author      : $(author)
- Version     :
- Copyright   : $(copyright)
- Description : main definition
+ Name        : ilmasto.cpp
+ Author(s)   : Jaakko Voutilainen, Tom-Paul Tuomisto, Taneli Liljasto, Heikki Rajamäki
+ Version     : 2.x
+ Copyright   : Jaakko Voutilainen
+ Description : Project Ilmasto's main program
 ===============================================================================
  */
 #if defined (__USE_LPCOPEN)
@@ -17,7 +17,6 @@
 #endif
 
 #include "ModbusMaster.h"
-
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -38,7 +37,6 @@
 #include <cr_section_macros.h>
 #include "I2C.h"
 #include "SetupEdit.h"
-
 #include <sstream>
 
 static volatile int counter;
@@ -63,33 +61,30 @@ volatile int kalib = 50; // Määrittää kalibrointirajan +-
 extern "C" {
 #endif
 
-
-	void SysTick_Handler(void)
-	{
-		if (nro >= 1000) {
-			flag = true;
-			nro = 0;
-		}
-		else {
-			nro++;
-		}
-
-		systicks++;
-		if (counter > 0) counter--;
-
-		// ADC systikki::begins
-		static uint32_t count;
-		adcstart = true;
-		count++;
-		// ADC systick::ends
-
+void SysTick_Handler(void)
+{
+	if (nro >= 1000) {
+		flag = true;
+		nro = 0;
 	}
+	else {
+		nro++;
+	}
+
+	systicks++;
+	if (counter > 0) counter--;
+
+	// ADC systikki::begins
+	static uint32_t count;
+	adcstart = true;
+	count++;
+	// ADC systick::ends
+
+}
 
 #ifdef __cplusplus
 }
 #endif
-
-
 
 /* this function is required by the modbus library */
 uint32_t millis() {
@@ -152,23 +147,23 @@ void Sleep(int ms)
 extern "C" {
 #endif
 
-	// ADC -- Alkaa
-	void ADC0A_IRQHandler(void)
-	{
-		uint32_t pending;
+// ADC -- Alkaa
+void ADC0A_IRQHandler(void)
+{
+	uint32_t pending;
 
-		/* Get pendinfg interrupts */
-		pending = Chip_ADC_GetFlags(LPC_ADC0);
+	/* Get pendinfg interrupts */
+	pending = Chip_ADC_GetFlags(LPC_ADC0);
 
-		/* Sequence A completion interrupt */
-		if (pending & ADC_FLAGS_SEQA_INT_MASK) {
-			adcdone = true;
-		}
-
-		/* Clear any pending interrupts */
-		Chip_ADC_ClearFlags(LPC_ADC0, pending);
+	/* Sequence A completion interrupt */
+	if (pending & ADC_FLAGS_SEQA_INT_MASK) {
+		adcdone = true;
 	}
-	// ADC -- Loppuu
+
+	/* Clear any pending interrupts */
+	Chip_ADC_ClearFlags(LPC_ADC0, pending);
+}
+// ADC -- Loppuu
 #ifdef __cplusplus
 }
 #endif
@@ -219,7 +214,7 @@ int main(void) {
 	// functions related to the board hardware
 	Board_Init();
 	// Set the LED to the state of "On"
-	Board_LED_Set(2, true);
+	Board_LED_Set(2, true); //Blue led on
 #endif
 #endif
 
@@ -271,9 +266,7 @@ int main(void) {
 
 	// ADC:n ALUSTUS LOPPUU
 
-
-
-
+	// Modbussin alustus
 	ModbusMaster node(2); // Create modbus object that connects to slave id 2
 
 	node.begin(9600); // set transmission rate - other parameters are set inside the object and can't be changed here
@@ -294,12 +287,12 @@ int main(void) {
 	//       but we take the easy way out and just wait a while and hope that everything goes well
 
 	printRegister(node, 3); // for debugging
+	// Modbus loppuu
 
 
 	// Näytön alustus ja alkuasetukset
 
 	LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
-
 	lcd.begin(16, 2);
 	lcd.setCursor(0, 0);
 
@@ -352,7 +345,7 @@ int main(void) {
 	//status.setValue(0, "OK");
 
 	// Alkuasetukset
-	// Moodi
+	// Idle oletusmoodiksi
 	mode.setValue("Idle");
 
 	char s[17];
@@ -404,12 +397,12 @@ int main(void) {
 
 					if (pressure() > setup.getValue(2)) {
 						//if (hertz > setup.getValue(3)) {
-							hertz--;
+						hertz--;
 						//}
 					}
 					if (pressure() < setup.getValue(1)) {
 						//if (hertz < setup.getValue(4)) {
-							hertz++;
+						hertz++;
 						//}
 					}
 
@@ -418,17 +411,17 @@ int main(void) {
 			}
 
 			if (mode.getValue() != "Idle"){
-							lcd.clear();
-							lcd.setCursor(0, 0);
-							lcd.print("Heartbeat.");
-							lcd.setCursor(0, 1);
-							lcd.print("Wait...");
-							Sleep(100);
-							setFrequency(node, (400 * hertz));
-							lcd.clear();
-							lcd.setCursor(0, 0);
-							lcd.print("Done!");
-							Sleep(1000);
+				lcd.clear();
+				lcd.setCursor(0, 0);
+				lcd.print("Heartbeat.");
+				lcd.setCursor(0, 1);
+				lcd.print("Wait...");
+				Sleep(100);
+				setFrequency(node, (400 * hertz));
+				lcd.clear();
+				lcd.setCursor(0, 0);
+				lcd.print("Done!");
+				Sleep(1000);
 			}
 
 			Chip_ADC_StartSequencer(LPC_ADC0, ADC_SEQA_IDX);
@@ -442,7 +435,7 @@ int main(void) {
 
 			a3 = Chip_ADC_GetDataReg(LPC_ADC0, 3);
 			d3 = ADC_DR_RESULT(a3);
-
+			// ADC loppuu
 
 			lukema = 0;
 			lcd.clear();
@@ -473,9 +466,6 @@ int main(void) {
 				lcd.print("Mode:I");
 			}
 
-
-
-
 			snprintf(s, 16, "%.1f", pressure());
 			lcd.setCursor(0, 1);
 
@@ -484,11 +474,8 @@ int main(void) {
 
 			//status.setValue(2, "OK");
 
-
-
 			lukema = 5;
 		}
-
 
 		if (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
 			while (Chip_GPIO_GetPinState(LPC_GPIO, 0, 10)) {
@@ -549,8 +536,6 @@ int main(void) {
 				//status.setValue(0, "OK");
 			}
 		}
-
 	}
-
 	return (0);
 }
